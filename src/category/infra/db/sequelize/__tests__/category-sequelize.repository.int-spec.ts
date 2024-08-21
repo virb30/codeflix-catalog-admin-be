@@ -6,21 +6,12 @@ import { NotFoundError } from "../../../../../shared/domain/errors/not-found.err
 import { CategoryModelMapper } from "../category-model-mapper";
 import { CategorySearchParams, CategorySearchResult } from "../../../../domain/category.repository";
 import { setupSequelize } from "../../../../../shared/infra/testing/helpers";
-import { Sequelize } from "sequelize-typescript";
-import { Config } from "../../../../../shared/infra/config";
-
-// TODO: make setupSequelize works
 
 describe("CategorySequelizeRepository Integration Test", () => {
     let repository: CategorySequelizeRepository;
-    let sequelize: Sequelize;
+    setupSequelize({ models: [CategoryModel] });
 
     beforeEach(async () => {
-        sequelize = new Sequelize({
-            ...Config.db(),
-            models: [CategoryModel]
-        });
-        await sequelize.sync({ force: true,  });
         repository = new CategorySequelizeRepository(CategoryModel);
     });
 
@@ -75,7 +66,7 @@ describe("CategorySequelizeRepository Integration Test", () => {
 
     it("should throw error on delete when a category not found", async () => {
         const categoryId = new Uuid();
-        expect(repository.delete(categoryId)).rejects.toThrow(
+        await expect(repository.delete(categoryId)).rejects.toThrow(
             new NotFoundError(categoryId.id, Category)
         );
     });

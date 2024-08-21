@@ -26,7 +26,7 @@ describe("UpdateCategoryUseCase Integration Tests", () => {
 
     it("should update a category", async () => {
         const entity = Category.fake().aCategory().build();
-        repository.insert(entity);
+        await repository.insert(entity);
 
         let output = await useCase.execute({ 
             id: entity.category_id.id,

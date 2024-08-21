@@ -7,7 +7,7 @@ describe("Uuid Unit Tests", () => {
 
     test("should throw error when uuid is invalid", () => {
         expect(() => {
-            new Uuid('invalid-uuid')
+            new Uuid('invalid-uuid');
         }).toThrow(new InvalidUuidError());
         expect(validateSpy).toHaveBeenCalledTimes(1);
     });
@@ -22,6 +22,7 @@ describe("Uuid Unit Tests", () => {
     test("should accept a valid uuid", () => {
        const uuid = new Uuid("c3e9b0d0-7b6f-4a8e-8e1f-3f9e6a2f7e3c");
        expect(uuid.id).toBe("c3e9b0d0-7b6f-4a8e-8e1f-3f9e6a2f7e3c");
+       expect(uuid.toString()).toEqual("c3e9b0d0-7b6f-4a8e-8e1f-3f9e6a2f7e3c");
        expect(validateSpy).toHaveBeenCalledTimes(1);
     });
 });

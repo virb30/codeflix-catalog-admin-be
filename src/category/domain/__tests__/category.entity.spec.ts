@@ -40,8 +40,6 @@ describe("Category Unit Tests", () => {
         });
     });
 
-
-
     describe("create command", () => {
         test("should create a category", () => {
             const category = Category.create({
@@ -82,9 +80,6 @@ describe("Category Unit Tests", () => {
         });
     });
 
-
-
-
     describe("category_id field", () => {
         const arrange = [
             { category_id: null}, { category_id:undefined}, {category_id: new Uuid()}
@@ -101,7 +96,6 @@ describe("Category Unit Tests", () => {
             }
         })
     })
-
 
     test("should change name", () => {
         const category = Category.create({
@@ -138,7 +132,6 @@ describe("Category Unit Tests", () => {
         expect(category.is_active).toBeFalsy();
     });
 });
-
 
 describe("Category Validator", () => {
     describe("create command", () => {
@@ -214,12 +207,27 @@ describe("Category Validator", () => {
 
     });
 
-    describe("changeName method", () => {
+    describe("changeDescription method", () => {
         test("should an invalid category with description property", () => {
             const category = Category.create({ name: "Movie" });
             expect(() => category.changeDescription(5 as any)).containsErrorMessages({
                 description: ["description must be a string"]
             });
         });
+    });
+
+    describe("validate command", () => {
+        test("should throw error if entity is invalid", () => {
+            expect(() => {
+                Category.validate(new Category({ name: "" }));
+            }).toThrow(new EntityValidationError({
+                name: [
+                    "name should not be empty",
+                    "name must be a string",
+                    "name must be shorter than or equal to 255 characters"
+                ]
+            }))
+        });
+
     });
 });

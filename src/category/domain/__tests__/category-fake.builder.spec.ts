@@ -31,24 +31,23 @@ describe("CategoryFakerBuilder Unit Tests", () => {
         });
 
         test("should pass index to category_id factory", () => {
-            let mockFactory = jest.fn(() => new Uuid());
+            const categoryId = new Uuid();
+            let mockFactory = jest.fn(() => categoryId);
             faker.withUuid(mockFactory);
             faker.build();
             expect(mockFactory).toHaveBeenCalledTimes(1);
 
-            const categoryId = new Uuid();
             mockFactory = jest.fn(() => categoryId);
-            const fakerMany = CategoryFakeBuilder.theCategories(2);
-            fakerMany.withUuid(mockFactory);
-            fakerMany.build();
+            const categories = CategoryFakeBuilder.theCategories(2)
+                .withUuid(mockFactory)
+                .build();
 
             expect(mockFactory).toHaveBeenCalledTimes(2);
-            expect(fakerMany.build()[0].category_id).toBe(categoryId);
-            expect(fakerMany.build()[1].category_id).toBe(categoryId);
+            expect(categories[0].category_id).toBe(categoryId);
+            expect(categories[1].category_id).toBe(categoryId);
         });
     });
 
-    // TODO: adicionar mais testes
     describe("name prop", () => {
         const faker = CategoryFakeBuilder.aCategory();
         test("should be a function", () => {

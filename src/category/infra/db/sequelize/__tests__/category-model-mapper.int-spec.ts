@@ -18,6 +18,7 @@ describe("CategoryModelMapper Integration Tests", () => {
             fail("The category is invalid, but it needs to throw EntityValidationError")
         } catch(e) {
             expect(e).toBeInstanceOf(EntityValidationError);
+            expect((e as EntityValidationError).count()).toBe(1);
             expect((e as EntityValidationError).errors).toMatchObject({
                 name: [
                     "name should not be empty",

@@ -1,4 +1,3 @@
-import { Sequelize } from "sequelize-typescript";
 import { CategoryModel } from "../category.model";
 import { CategorySequelizeRepository } from "../category-sequelize.repository";
 import { Category } from "../../../../domain/category.entity";
@@ -6,24 +5,26 @@ import { Uuid } from "../../../../../shared/domain/value-objects/uuid.vo";
 import { NotFoundError } from "../../../../../shared/domain/errors/not-found.error";
 import { CategoryModelMapper } from "../category-model-mapper";
 import { CategorySearchParams, CategorySearchResult } from "../../../../domain/category.repository";
-import { result } from "lodash";
+import { setupSequelize } from "../../../../../shared/infra/testing/helpers";
+import { Sequelize } from "sequelize-typescript";
+import { Config } from "../../../../../shared/infra/config";
+
+// TODO: make setupSequelize works
 
 describe("CategorySequelizeRepository Integration Test", () => {
-    let sequelize;
     let repository: CategorySequelizeRepository;
+    let sequelize: Sequelize;
 
     beforeEach(async () => {
         sequelize = new Sequelize({
-            dialect: "sqlite",
-            storage: ":memory:",
-            models: [CategoryModel],
-            logging: false
+            ...Config.db(),
+            models: [CategoryModel]
         });
-        await sequelize.sync({ force: true });
+        await sequelize.sync({ force: true,  });
         repository = new CategorySequelizeRepository(CategoryModel);
     });
 
-    test("should insert a new category", async () => {
+    it("should insert a new category", async () => {
         const category = Category.fake().aCategory().build();
         await repository.insert(category);
 
@@ -37,7 +38,7 @@ describe("CategorySequelizeRepository Integration Test", () => {
         });
     });
 
-    test("should find a category by id", async () => {
+    it("should find a category by id", async () => {
         let categoryFound = await repository.findById(new Uuid());
         expect(categoryFound).toBeNull();
 
@@ -47,21 +48,21 @@ describe("CategorySequelizeRepository Integration Test", () => {
         expect(category.toJSON()).toStrictEqual(categoryFound.toJSON());
     });
 
-    test("should return all categories", async () => {
+    it("should return all categories", async () => {
         const category = Category.fake().aCategory().build();
         await repository.insert(category);
         const categories = await repository.findAll();
         expect(categories).toHaveLength(1);
     });
 
-    test("should throw error on update when category not found", async () => {
+    it("should throw error on update when category not found", async () => {
         const category = Category.fake().aCategory().build();
         await expect(repository.update(category)).rejects.toThrow(
             new NotFoundError(category.category_id.id, Category)
         );
     });
 
-    test("should update a category", async () => {
+    it("should update a category", async () => {
         const category = Category.fake().aCategory().build();
         await repository.insert(category);
 
@@ -72,14 +73,14 @@ describe("CategorySequelizeRepository Integration Test", () => {
         expect(category.toJSON()).toStrictEqual(categoryFound.toJSON());
     });
 
-    test("should throw error on delete when a category not found", async () => {
+    it("should throw error on delete when a category not found", async () => {
         const categoryId = new Uuid();
         expect(repository.delete(categoryId)).rejects.toThrow(
-            new NotFoundError(categoryId, Category)
+            new NotFoundError(categoryId.id, Category)
         );
     });
 
-    test("should delete a category", async () => {
+    it("should delete a category", async () => {
         const category = Category.fake().aCategory().build();
         await repository.insert(category);
 
@@ -89,7 +90,7 @@ describe("CategorySequelizeRepository Integration Test", () => {
 
     describe("search method tests", () => {
 
-        test("should only apply paginate when other params are null", async () => {
+        it("should only apply paginate when other params are null", async () => {
             const created_at = new Date();
             const categories = Category.fake()
                 .theCategories(16)
@@ -123,7 +124,7 @@ describe("CategorySequelizeRepository Integration Test", () => {
             );
         });
 
-        test("should order by created_at DESC when search params are null", async () => {
+        it("should order by created_at DESC when search params are null", async () => {
             const created_at = new Date();
             const categories = Category.fake()
                 .theCategories(16)
@@ -139,7 +140,7 @@ describe("CategorySequelizeRepository Integration Test", () => {
             });
         });
 
-        test("should apply paginate and filter", async () => {
+        it("should apply paginate and filter", async () => {
             const categories = [
                 Category.fake()
                     .aCategory()
@@ -200,7 +201,7 @@ describe("CategorySequelizeRepository Integration Test", () => {
             );
         });
 
-        test("should paginate and sort", async () => {
+        it("should paginate and sort", async () => {
             expect(repository.sortableFields).toStrictEqual(["name", "created_at"]);
 
             const categories = [

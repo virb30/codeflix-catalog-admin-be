@@ -1,12 +1,9 @@
-import { last } from "lodash";
-import { NotFoundError } from "../../../../../shared/domain/errors/not-found.error";
-import { Uuid } from "../../../../../shared/domain/value-objects/uuid.vo";
 import { setupSequelize } from "../../../../../shared/infra/testing/helpers";
 import { Category } from "../../../../domain/category.entity";
 import { CategorySequelizeRepository } from "../../../../infra/db/sequelize/category-sequelize.repository";
 import { CategoryModel } from "../../../../infra/db/sequelize/category.model";
 import { CategoryOutputMapper } from "../../common/category-output";
-import { ListCategoriesUseCase } from "../../list-categories.use-case"
+import { ListCategoriesUseCase } from "../list-categories.use-case"
 
 describe("ListCategoriesUseCase Integration Tests", () => {
     let useCase: ListCategoriesUseCase;

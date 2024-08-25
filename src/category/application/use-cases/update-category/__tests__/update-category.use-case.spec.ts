@@ -1,59 +1,72 @@
 import { NotFoundError } from "../../../../../shared/domain/errors/not-found.error";
-import { Uuid } from "../../../../../shared/domain/value-objects/uuid.vo";
-import { setupSequelize } from "../../../../../shared/infra/testing/helpers";
+import { InvalidUuidError, Uuid } from "../../../../../shared/domain/value-objects/uuid.vo";
 import { Category } from "../../../../domain/category.entity";
-import { CategorySequelizeRepository } from "../../../../infra/db/sequelize/category-sequelize.repository";
-import { CategoryModel } from "../../../../infra/db/sequelize/category.model";
-import { UpdateCategoryUseCase } from "../../update-category.use-case";
+import { CategoryInMemoryRepository } from "../../../../infra/db/in-memory/category-in-memory.repository";
+import { UpdateCategoryUseCase } from "../update-category.use-case";
 
-describe("UpdateCategoryUseCase Integration Tests", () => {
+
+describe("UpdateCategoryUseCase Unit Tests", () => {
     let useCase: UpdateCategoryUseCase;
-    let repository: CategorySequelizeRepository;
-
-    setupSequelize({ models: [CategoryModel ]});
+    let repository: CategoryInMemoryRepository;
 
     beforeEach(() => {
-        repository = new CategorySequelizeRepository(CategoryModel);
+        repository = new CategoryInMemoryRepository();
         useCase = new UpdateCategoryUseCase(repository);
     });
 
+    it("should throw an error when category is not valid", async () => {
+        const entity = new Category({ name: "Movie" });
+        repository.items = [entity];
+        const input = { id: entity.category_id.id, name: "t".repeat(256) };
+        await expect(() => useCase.execute(input)).rejects.toThrow(
+            "Entity Validation Error",
+        );
+    });
+
     it("should throws error when entity not found", async () => {
-        const uuid = new Uuid();
         await expect(() => 
-            useCase.execute({ id: uuid.id, name: "fake"})
+            useCase.execute({ id: "fake id", name: "fake" })
+        ).rejects.toThrow(new InvalidUuidError());
+
+        const uuid = new Uuid();
+
+        await expect(() => 
+            useCase.execute({ id: uuid.id, name: "fake" })
         ).rejects.toThrow(new NotFoundError(uuid.id, Category));
     });
 
     it("should update a category", async () => {
-        const entity = Category.fake().aCategory().build();
-        await repository.insert(entity);
+        const spyUpdate = jest.spyOn(repository, "update");
+        const entity = new Category({ name: "Movie" });
+        repository.items = [entity];
 
         let output = await useCase.execute({ 
             id: entity.category_id.id,
             name: "test" 
         });
+        expect(spyUpdate).toHaveBeenCalledTimes(1);
         expect(output).toStrictEqual({
-           id: entity.category_id.id,
-           name: "test",
-           description: entity.description,
-           is_active: true,
-           created_at: entity.created_at
+            id: entity.category_id.id,
+            name: "test",
+            description: null,
+            is_active: true,
+            created_at: entity.created_at,
         });
 
         type Arrange = {
             input: {
                 id: string;
-                name: string;
+                name?: string;
                 description?: null | string;
                 is_active?: boolean;
             };
             expected: {
                 id: string;
                 name: string;
-                description?: null | string;
+                description: null | string;
                 is_active: boolean;
                 created_at: Date;
-            };
+            }
         }
 
         const arrange: Arrange[] = [
@@ -61,7 +74,7 @@ describe("UpdateCategoryUseCase Integration Tests", () => {
                 input: {
                     id: entity.category_id.id,
                     name: "test",
-                    description: "some description"
+                    description: "some description",
                 },
                 expected: {
                     id: entity.category_id.id,
@@ -69,20 +82,7 @@ describe("UpdateCategoryUseCase Integration Tests", () => {
                     description: "some description",
                     is_active: true,
                     created_at: entity.created_at
-                },
-            },
-            {
-                input: {
-                    id: entity.category_id.id,
-                    name: "test",
-                },
-                expected: {
-                    id: entity.category_id.id,
-                    name: "test",
-                    description: "some description",
-                    is_active: true,
-                    created_at: entity.created_at
-                },
+                }
             },
             {
                 input: {
@@ -96,12 +96,12 @@ describe("UpdateCategoryUseCase Integration Tests", () => {
                     description: "some description",
                     is_active: false,
                     created_at: entity.created_at
-                },
+                }
             },
             {
                 input: {
                     id: entity.category_id.id,
-                    name: "test",
+                    name: "test",                    
                 },
                 expected: {
                     id: entity.category_id.id,
@@ -109,13 +109,13 @@ describe("UpdateCategoryUseCase Integration Tests", () => {
                     description: "some description",
                     is_active: false,
                     created_at: entity.created_at
-                },
+                }
             },
             {
                 input: {
                     id: entity.category_id.id,
                     name: "test",
-                    is_active: true
+                    is_active: true,                    
                 },
                 expected: {
                     id: entity.category_id.id,
@@ -123,7 +123,21 @@ describe("UpdateCategoryUseCase Integration Tests", () => {
                     description: "some description",
                     is_active: true,
                     created_at: entity.created_at
+                }
+            },
+            {
+                input: {
+                    id: entity.category_id.id,
+                    name: "test",
+                    description: "another description",             
                 },
+                expected: {
+                    id: entity.category_id.id,
+                    name: "test",
+                    description: "another description",
+                    is_active: true,
+                    created_at: entity.created_at
+                }
             },
             {
                 input: {
@@ -133,10 +147,10 @@ describe("UpdateCategoryUseCase Integration Tests", () => {
                 expected: {
                     id: entity.category_id.id,
                     name: "another test",
-                    description: "some description",
+                    description: "another description",
                     is_active: true,
                     created_at: entity.created_at
-                },
+                }
             },
         ];
 
@@ -147,21 +161,13 @@ describe("UpdateCategoryUseCase Integration Tests", () => {
                 ...("description" in i.input && { description: i.input.description }),
                 ...("is_active" in i.input && { is_active: i.input.is_active })
             });
-            const entityUpdated = await repository.findById(new Uuid(i.input.id));
             expect(output).toStrictEqual({
                 id: entity.category_id.id,
                 name: i.expected.name,
                 description: i.expected.description,
                 is_active: i.expected.is_active,
-                created_at: entityUpdated.created_at,
-            });
-            expect(entityUpdated.toJSON()).toStrictEqual({
-                category_id: entity.category_id.id,
-                name: i.expected.name,
-                description: i.expected.description,
-                is_active: i.expected.is_active,
                 created_at: i.expected.created_at,
-            })
+            });
         }
     });
 });

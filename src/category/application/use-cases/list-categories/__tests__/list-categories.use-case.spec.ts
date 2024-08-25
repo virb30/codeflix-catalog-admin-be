@@ -1,10 +1,8 @@
-import { NotFoundError } from "../../../../../shared/domain/errors/not-found.error";
-import { InvalidUuidError, Uuid } from "../../../../../shared/domain/value-objects/uuid.vo";
 import { Category } from "../../../../domain/category.entity";
 import { CategorySearchResult } from "../../../../domain/category.repository";
 import { CategoryInMemoryRepository } from "../../../../infra/db/in-memory/category-in-memory.repository";
 import { CategoryOutputMapper } from "../../common/category-output";
-import { ListCategoriesUseCase } from "../../list-categories.use-case";
+import { ListCategoriesUseCase } from "../list-categories.use-case";
 
 
 describe("UpdateCategoryUseCase Unit Tests", () => {

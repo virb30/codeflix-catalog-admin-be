@@ -29,7 +29,8 @@
                 "esbenp.prettier-vscode",
                 "Orta.vscode-jest",
                 "firsttris.vscode-jest-runner",
-                "ms-vscode.live-server"
+                "ms-vscode.live-server",
+                "pkief.material-icon-theme"
             ]
         }
     }

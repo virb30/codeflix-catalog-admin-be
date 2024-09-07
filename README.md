@@ -22,3 +22,7 @@ cd codeflix-catalog-admin-be
 docker compose up -d
 docker compose exec -it app npm run test:cov
 ```
+
+## Devcontainer integration
+
+To use vscode devcontainer to improve development, rename `devcontainer.json.example` to `devcontainer.json` and configure with your needs.

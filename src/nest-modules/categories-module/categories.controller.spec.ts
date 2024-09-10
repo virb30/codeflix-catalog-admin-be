@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriesController } from './categories.controller';
 import { CategoriesModule } from './categories.module';
-import { DatabaseModule } from '../database/database.module';
-import { ConfigModule } from '../config/config.module';
-import { ConfigService } from '@nestjs/config';
+import { DatabaseModule } from '../database-module/database.module';
+import { ConfigModule } from '../config-module/config.module';
 
 describe('CategoriesController', () => {
   let controller: CategoriesController;
@@ -14,7 +13,6 @@ describe('CategoriesController', () => {
     }).compile();
 
     controller = module.get<CategoriesController>(CategoriesController);
-    console.log(module.get(ConfigService));
   });
 
   it('should be defined', () => {

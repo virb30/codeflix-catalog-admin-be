@@ -13,9 +13,7 @@ import { CategorySequelizeRepository } from 'src/core/category/infra/db/sequeliz
 
 @Controller('categories')
 export class CategoriesController {
-  constructor(private categoryRepo: CategorySequelizeRepository) {
-    console.log(this.categoryRepo);
-  }
+  constructor(private categoryRepo: CategorySequelizeRepository) {}
 
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto) {}

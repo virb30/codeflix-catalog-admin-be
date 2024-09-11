@@ -1,4 +1,4 @@
-import { FieldsError } from "./shared/domain/validators/validator-fields.interface";
+import { FieldsError } from "./nest-modules/shared-module/domain/validators/validator-fields.interface";
 
 declare global {
     namespace jest {

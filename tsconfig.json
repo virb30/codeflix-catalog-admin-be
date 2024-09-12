@@ -17,10 +17,10 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "paths": {
-        "@core/*": [
-            "./src/core/*"
-        ]
-    }
+    // "paths": {
+    //     "@core/*": [
+    //         "./src/core/*"
+    //     ]
+    // }
   }
 }

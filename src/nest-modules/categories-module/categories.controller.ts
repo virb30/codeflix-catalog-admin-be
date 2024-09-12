@@ -79,7 +79,7 @@ export class CategoriesController {
   remove(
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 422 })) id: string,
   ) {
-    this.deleteUseCase.execute({ id });
+    return this.deleteUseCase.execute({ id });
   }
 
   static serialize(output: CategoryOutput) {

@@ -1,5 +1,6 @@
-### Create Category
+## valid uuid = c63b103c-eab2-47f8-ac50-85a201b00532
 
+### Create Category
 POST http://localhost:3000/categories
 Content-Type: application/json
 
@@ -8,5 +9,8 @@ Content-Type: application/json
   "description": "Description 1"
 }
 
-### List Category
+### List Categories
 GET http://localhost:3000/categories
+
+### GET Category
+GET http://localhost:3000/categories/c63b103c-eab2-47f8-ac50-85a201b00532

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { CONFIG_SCHEMA_TYPE } from 'src/nest-modules/config-module/config.module';
@@ -6,6 +6,7 @@ import { CategoryModel } from 'src/core/category/infra/db/sequelize/category.mod
 
 const models = [CategoryModel];
 
+@Global()
 @Module({
   imports: [
     SequelizeModule.forRootAsync({

@@ -218,47 +218,16 @@ export class UpdateCateogryFixture {
   static arrangeInvalidRequest() {
     const defaultExpected = {
       statusCode: 422,
-      error: 'Unprecessable Entity',
+      error: 'Unprocessable Entity',
     };
 
     return {
-      NAME_UNDEFINED: {
-        send_data: {
-          name: undefined,
-        },
-        expected: {
-          message: ['name should not be empty', 'name must be a string'],
-          ...defaultExpected,
-        },
-      },
-      NAME_NULL: {
-        send_data: {
-          name: null,
-        },
-        expected: {
-          message: ['name should not be empty', 'name must be a string'],
-          ...defaultExpected,
-        },
-      },
-      NAME_EMPTY: {
-        send_data: {
-          name: null,
-        },
-        expected: {
-          message: ['name should not be empty'],
-          ...defaultExpected,
-        },
-      },
       DESCRIPTION_NOT_A_STRING: {
         send_data: {
           description: 5,
         },
         expected: {
-          message: [
-            'name should not be empty',
-            'name must be a string',
-            'description must be a string',
-          ],
+          message: ['description must be a string'],
           ...defaultExpected,
         },
       },
@@ -267,11 +236,7 @@ export class UpdateCateogryFixture {
           is_active: 'a',
         },
         expected: {
-          message: [
-            'name should not be empty',
-            'name must be a string',
-            'is_active must be a boolean value',
-          ],
+          message: ['is_active must be a boolean value'],
           ...defaultExpected,
         },
       },

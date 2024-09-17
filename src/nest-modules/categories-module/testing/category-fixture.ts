@@ -82,7 +82,7 @@ export class CreateCateogryFixture {
   static arrangeInvalidRequest() {
     const defaultExpected = {
       statusCode: 422,
-      error: 'Unprecessable Entity',
+      error: 'Unprocessable Entity',
     };
 
     return {
@@ -113,7 +113,7 @@ export class CreateCateogryFixture {
       },
       NAME_EMPTY: {
         send_data: {
-          name: null,
+          name: '',
         },
         expected: {
           message: ['name should not be empty'],

@@ -1,26 +1,26 @@
 import { MaxLength } from 'class-validator';
-import { Category } from './category.entity';
 import { ClassValidatorFields } from '../../shared/domain/validators/class-validator-fields';
 import { Notification } from '../../shared/domain/validators/notification';
+import { CastMember } from './cast-member.entity';
 
-export class CategoryRules {
+export class CastMemberRules {
   @MaxLength(255, { groups: ['name'] })
   name: string;
 
-  constructor(entity: Category) {
+  constructor(entity: CastMember) {
     Object.assign(this, entity);
   }
 }
 
-class CategoryValidator extends ClassValidatorFields {
+class CastMemberValidator extends ClassValidatorFields {
   validate(notification: Notification, data: any, fields?: string[]): boolean {
     const newFields = fields?.length ? fields : ['name'];
-    return super.validate(notification, new CategoryRules(data), newFields);
+    return super.validate(notification, new CastMemberRules(data), newFields);
   }
 }
 
-export class CategoryValidatorFactory {
+export class CastMemberValidatorFactory {
   static create() {
-    return new CategoryValidator();
+    return new CastMemberValidator();
   }
 }

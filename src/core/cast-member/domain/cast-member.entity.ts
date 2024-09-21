@@ -3,6 +3,7 @@ import { Uuid } from '../../shared/domain/value-objects/uuid.vo';
 import { CastMemberType } from './cast-member-type.vo';
 import { ValueObject } from '../../shared/domain/value-object';
 import { CastMemberValidatorFactory } from './cast-member.validator';
+import { CastMemberFakeBuilder } from './cast-member-fake.builder';
 
 export type CastMemberConstructorProps = {
   id?: Uuid;
@@ -36,6 +37,10 @@ export class CastMember extends Entity {
     return castMember;
   }
 
+  static fake() {
+    return CastMemberFakeBuilder;
+  }
+
   validate(fields?: string[]) {
     const validator = CastMemberValidatorFactory.create();
     return validator.validate(this.notification, this, fields);
@@ -56,7 +61,7 @@ export class CastMember extends Entity {
 
   toJSON() {
     return {
-      category_id: this.id.id,
+      id: this.id.id,
       name: this.name,
       type: this.type,
       created_at: this.created_at,

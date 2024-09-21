@@ -6,7 +6,7 @@ import {
   Uuid,
 } from '../../../../../shared/domain/value-objects/uuid.vo';
 import { UpdateCastMemberUseCase } from '../update-cast-member.use-case';
-import { CastMemberType } from 'src/core/cast-member/domain/cast-member-type.vo';
+import { CastMemberType } from '../../../../../cast-member/domain/cast-member-type.vo';
 
 describe('UpdateCastMemberUseCase Unit Tests', () => {
   let usecase: UpdateCastMemberUseCase;
@@ -81,7 +81,7 @@ describe('UpdateCastMemberUseCase Unit Tests', () => {
         .aCastMember()
         .withUuid(id)
         .withName('John Doe')
-        .withType(1)
+        .withType(CastMemberType.createADirector())
         .withCreatedAt(created_at)
         .build();
       repository.items = [entity];
@@ -99,7 +99,7 @@ describe('UpdateCastMemberUseCase Unit Tests', () => {
   it('should throw error when cast member is invalid', async () => {
     const entity = new CastMember({
       name: 'John Doe',
-      type: CastMemberType.ACTOR,
+      type: CastMemberType.createAnActor(),
     });
     repository.items = [entity];
     let input = { id: entity.id.id, name: 't'.repeat(256) };
@@ -109,7 +109,7 @@ describe('UpdateCastMemberUseCase Unit Tests', () => {
 
     input = { id: entity.id.id, type: 3 } as any;
     await expect(() => usecase.execute(input)).rejects.toThrow(
-      'Entity Validation Error',
+      'Invalid cast member type: 3',
     );
   });
 

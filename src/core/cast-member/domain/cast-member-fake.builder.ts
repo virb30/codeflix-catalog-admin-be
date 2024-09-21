@@ -9,12 +9,8 @@ type PropOrFactory<T> = T | ((index: number) => T);
 export class CastMemberFakeBuilder<TBuild = any> {
   private _id: PropOrFactory<Uuid> | undefined = undefined;
   private _name: PropOrFactory<string> = (_index) => this.chance.word();
-  private _type: PropOrFactory<CastMemberType | number> = (_index) =>
-    this.chance.pickone<CastMemberType | number>(
-      Object.values(CastMemberType).map((castMemberType) =>
-        Number(castMemberType),
-      ),
-    );
+  private _type: PropOrFactory<CastMemberType> = (_index) =>
+    CastMemberType.createAnActor();
   private _created_at: PropOrFactory<Date> | undefined = undefined;
 
   private countObjs;

@@ -9,6 +9,7 @@ import { Uuid } from '../../../..//shared/domain/value-objects/uuid.vo';
 import { NotFoundError } from '../../../..//shared/domain/errors/not-found.error';
 import { CastMember } from '../../../..//cast-member/domain/cast-member.entity';
 import { EntityValidationError } from '../../../..//shared/domain/validators/validation.error';
+import { CastMemberType } from 'src/core/cast-member/domain/cast-member-type.vo';
 
 export class UpdateCastMemberUseCase
   implements IUseCase<UpdateCastMemberInput, UpdateCastMemberOutput>
@@ -28,7 +29,8 @@ export class UpdateCastMemberUseCase
     }
 
     if ('type' in input) {
-      castMember.changeType(input.type);
+      const type = CastMemberType.create(input.type);
+      castMember.changeType(type);
     }
 
     if (castMember.notification.hasErrors()) {

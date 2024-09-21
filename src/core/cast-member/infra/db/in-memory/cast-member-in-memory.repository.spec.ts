@@ -1,3 +1,4 @@
+import { CastMemberType } from '../../../../cast-member/domain/cast-member-type.vo';
 import { CastMember } from '../../../domain/cast-member.entity';
 import { CastMemberInMemoryRepository } from './cast-member-in-memory.repository';
 
@@ -17,15 +18,30 @@ describe('CastMemberInMemoryRepository', () => {
 
   it('should filter items using filter parameter', async () => {
     const items = [
-      CastMember.fake().aCastMember().withName('test').build(),
-      CastMember.fake().aCastMember().withName('TEST').build(),
-      CastMember.fake().aCastMember().withName('fake').build(),
+      CastMember.fake()
+        .aCastMember()
+        .withName('test')
+        .withType(CastMemberType.createADirector())
+        .build(),
+      CastMember.fake()
+        .aCastMember()
+        .withName('TEST')
+        .withType(CastMemberType.createAnActor())
+        .build(),
+      CastMember.fake()
+        .aCastMember()
+        .withName('fake')
+        .withType(CastMemberType.createADirector())
+        .build(),
     ];
     const filterSpy = jest.spyOn(items, 'filter' as any);
-    const itemsFiltered = await repository['applyFilter'](items, 'TEST');
+    const itemsFiltered = await repository['applyFilter'](items, {
+      name: 'TEST',
+      type: CastMemberType.createADirector(),
+    });
 
     expect(filterSpy).toHaveBeenCalledTimes(1);
-    expect(itemsFiltered).toStrictEqual([items[0], items[1]]);
+    expect(itemsFiltered).toStrictEqual([items[0]]);
   });
 
   it('should sort by created_at when sort param is null', async () => {

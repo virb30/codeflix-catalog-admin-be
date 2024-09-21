@@ -1,4 +1,4 @@
-import { CastMemberType } from '../../../../../cast-member/domain/cast-member-type.vo';
+import { CastMemberTypes } from '../../../../../cast-member/domain/cast-member-type.vo';
 import { CreateCastMemberUseCase } from '../create-cast-member.use-case';
 import { CastMemberInMemoryRepository } from '../../../../../cast-member/infra/db/in-memory/cast-member-in-memory.repository';
 
@@ -33,7 +33,7 @@ describe('CreateCastMemberUseCase Unit Tests', () => {
     });
     expect(output.id).toBeDefined();
     expect(output.name).toBe('John Doe');
-    expect(output.type).toBe(CastMemberType.DIRECTOR);
+    expect(output.type).toBe(CastMemberTypes.DIRECTOR);
     expect(output.created_at).toBeInstanceOf(Date);
   });
 });

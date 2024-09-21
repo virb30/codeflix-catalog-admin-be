@@ -8,7 +8,7 @@ import {
 } from '../../../../cast-member/domain/cast-member.repository';
 
 export class CastMemberInMemoryRepository
-  extends InMemorySearchableRepository<CastMember, Uuid>
+  extends InMemorySearchableRepository<CastMember, Uuid, CastMemberFilter>
   implements ICastMemberRepository
 {
   sortableFields: string[] = ['name', 'created_at'];
@@ -22,7 +22,14 @@ export class CastMemberInMemoryRepository
     }
 
     return items.filter((i) => {
-      return i.name.toLowerCase().includes(filter.toLowerCase());
+      const containsName =
+        filter.name && i.name.toLowerCase().includes(filter.name.toLowerCase());
+      const hasType = filter.type && i.type.equals(filter.type);
+      return filter.name && filter.type
+        ? containsName && hasType
+        : filter.name
+          ? containsName
+          : hasType;
     });
   }
 

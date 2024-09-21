@@ -1,26 +1,26 @@
-import { Category } from '../../../../domain/category.entity';
-import { CategorySearchResult } from '../../../../domain/category.repository';
-import { CategoryInMemoryRepository } from '../../../../infra/db/in-memory/category-in-memory.repository';
-import { CategoryOutputMapper } from '../../common/category-output';
-import { ListCategoriesUseCase } from '../list-categories.use-case';
+import { CastMember } from '../../../../domain/cast-member.entity';
+import { CastMemberSearchResult } from '../../../../domain/cast-member.repository';
+import { CastMemberInMemoryRepository } from '../../../../infra/db/in-memory/cast-member-in-memory.repository';
+import { CastMemberOutputMapper } from '../../common/cast-member.output';
+import { ListCastMembersUseCase } from '../list-cast-members.use-case';
 
-describe('ListCategoriesUseCase Unit Tests', () => {
-  let useCase: ListCategoriesUseCase;
-  let repository: CategoryInMemoryRepository;
+describe('ListCastMemberUseCase Unit Tests', () => {
+  let usecase: ListCastMembersUseCase;
+  let repository: CastMemberInMemoryRepository;
 
   beforeEach(() => {
-    repository = new CategoryInMemoryRepository();
-    useCase = new ListCategoriesUseCase(repository);
+    repository = new CastMemberInMemoryRepository();
+    usecase = new ListCastMembersUseCase(repository);
   });
 
   test('toOutput method', () => {
-    let result = new CategorySearchResult({
+    let result = new CastMemberSearchResult({
       items: [],
       total: 1,
       current_page: 1,
       per_page: 2,
     });
-    let output = useCase['toOutput'](result);
+    let output = usecase['toOutput'](result);
     expect(output).toStrictEqual({
       items: [],
       total: 1,
@@ -29,16 +29,16 @@ describe('ListCategoriesUseCase Unit Tests', () => {
       last_page: 1,
     });
 
-    const entity = Category.create({ name: 'Movie ' });
-    result = new CategorySearchResult({
+    const entity = CastMember.create({ name: 'Movie ' });
+    result = new CastMemberSearchResult({
       items: [entity],
       total: 1,
       current_page: 1,
       per_page: 2,
     });
-    output = useCase['toOutput'](result);
+    output = usecase['toOutput'](result);
     expect(output).toStrictEqual({
-      items: [entity].map(CategoryOutputMapper.toOutput),
+      items: [entity].map(CastMemberOutputMapper.toOutput),
       total: 1,
       current_page: 1,
       per_page: 2,
@@ -48,16 +48,16 @@ describe('ListCategoriesUseCase Unit Tests', () => {
 
   it('should return output sorted by created_at when input param is empty', async () => {
     const items = [
-      new Category({ name: 'test 1' }),
-      new Category({
+      new CastMember({ name: 'test 1' }),
+      new CastMember({
         name: 'test 2',
         created_at: new Date(new Date().getTime() + 100),
       }),
     ];
     repository.items = items;
-    const output = await useCase.execute({});
+    const output = await usecase.execute({});
     expect(output).toStrictEqual({
-      items: [...items].reverse().map(CategoryOutputMapper.toOutput),
+      items: [...items].reverse().map(CastMemberOutputMapper.toOutput),
       total: 2,
       current_page: 1,
       per_page: 15,
@@ -67,53 +67,53 @@ describe('ListCategoriesUseCase Unit Tests', () => {
 
   it('should return output using pagination, sort and filter', async () => {
     const items = [
-      new Category({
+      new CastMember({
         name: 'a',
       }),
-      new Category({
+      new CastMember({
         name: 'AAA',
       }),
-      new Category({
+      new CastMember({
         name: 'AaA',
       }),
-      new Category({
+      new CastMember({
         name: 'b',
       }),
-      new Category({
+      new CastMember({
         name: 'c',
       }),
     ];
     repository.items = items;
 
-    let output = await useCase.execute({
+    let output = await usecase.execute({
       page: 1,
       per_page: 2,
       sort: 'name',
       filter: 'a',
     });
     expect(output).toStrictEqual({
-      items: [items[1], items[2]].map(CategoryOutputMapper.toOutput),
+      items: [items[1], items[2]].map(CastMemberOutputMapper.toOutput),
       total: 3,
       current_page: 1,
       per_page: 2,
       last_page: 2,
     });
 
-    output = await useCase.execute({
+    output = await usecase.execute({
       page: 2,
       per_page: 2,
       sort: 'name',
       filter: 'a',
     });
     expect(output).toStrictEqual({
-      items: [items[0]].map(CategoryOutputMapper.toOutput),
+      items: [items[0]].map(CastMemberOutputMapper.toOutput),
       total: 3,
       current_page: 2,
       per_page: 2,
       last_page: 2,
     });
 
-    output = await useCase.execute({
+    output = await usecase.execute({
       page: 1,
       per_page: 2,
       sort: 'name',
@@ -121,14 +121,14 @@ describe('ListCategoriesUseCase Unit Tests', () => {
       filter: 'a',
     });
     expect(output).toStrictEqual({
-      items: [items[0], items[2]].map(CategoryOutputMapper.toOutput),
+      items: [items[0], items[2]].map(CastMemberOutputMapper.toOutput),
       total: 3,
       current_page: 1,
       per_page: 2,
       last_page: 2,
     });
 
-    output = await useCase.execute({
+    output = await usecase.execute({
       page: 2,
       per_page: 2,
       sort: 'name',
@@ -136,7 +136,7 @@ describe('ListCategoriesUseCase Unit Tests', () => {
       filter: 'a',
     });
     expect(output).toStrictEqual({
-      items: [items[1]].map(CategoryOutputMapper.toOutput),
+      items: [items[1]].map(CastMemberOutputMapper.toOutput),
       total: 3,
       current_page: 2,
       per_page: 2,

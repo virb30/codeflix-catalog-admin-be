@@ -11,7 +11,7 @@ describe('CastMemberOutputMapper Unit Tests', () => {
     expect(output).toStrictEqual({
       id: entity.id.id,
       name: 'John Doe',
-      type: entity.type,
+      type: entity.type.type,
       created_at: entity.created_at,
     });
   });

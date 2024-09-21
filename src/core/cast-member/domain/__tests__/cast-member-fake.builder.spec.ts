@@ -1,7 +1,7 @@
 import { Chance } from 'chance';
 import { Uuid } from '../../../shared/domain/value-objects/uuid.vo';
 import { CastMemberFakeBuilder } from '../cast-member-fake.builder';
-import { CastMemberType } from '../cast-member-type.vo';
+import { CastMemberType, CastMemberTypes } from '../cast-member-type.vo';
 
 describe('CastMemberFakerBuilder Unit Tests', () => {
   describe('id prop', () => {
@@ -145,7 +145,7 @@ describe('CastMemberFakerBuilder Unit Tests', () => {
 
     expect(castMember.id).toBeInstanceOf(Uuid);
     expect(typeof castMember.name === 'string').toBeTruthy();
-    expect(typeof castMember.type === 'number').toBeTruthy();
+    expect(castMember.type).toBeInstanceOf(CastMemberType);
     expect(castMember.created_at).toBeInstanceOf(Date);
 
     const created_at = new Date();
@@ -169,7 +169,8 @@ describe('CastMemberFakerBuilder Unit Tests', () => {
     castMembers.forEach((castMember) => {
       expect(castMember.id).toBeInstanceOf(Uuid);
       expect(typeof castMember.name === 'string').toBeTruthy();
-      expect(typeof castMember.type === 'number').toBeTruthy();
+      expect(castMember.type).toBeInstanceOf(CastMemberType);
+      expect(castMember.type.type).toEqual(CastMemberTypes.ACTOR);
       expect(castMember.created_at).toBeInstanceOf(Date);
     });
 
@@ -179,14 +180,15 @@ describe('CastMemberFakerBuilder Unit Tests', () => {
     castMembers = faker
       .withUuid(id)
       .withName('name test')
-      .withType(CastMemberType.ACTOR)
+      .withType(CastMemberType.createAnActor())
       .withCreatedAt(created_at)
       .build();
 
     castMembers.forEach((castMember) => {
       expect(castMember.id.id).toBe(id.id);
       expect(castMember.name).toBe('name test');
-      expect(castMember.type).toBe(CastMemberType.ACTOR);
+      expect(castMember.type).toBeInstanceOf(CastMemberType);
+      expect(castMember.type.type).toBe(CastMemberTypes.ACTOR);
       expect(castMember.created_at).toBe(created_at);
     });
   });

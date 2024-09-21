@@ -3,8 +3,12 @@ import { ISearchableRepository } from '../../shared/domain/repository/repository
 import { SearchParams } from '../../shared/domain/repository/search-params';
 import { SearchResult } from '../../shared/domain/repository/search-result';
 import { CastMember } from './cast-member.entity';
+import { CastMemberType } from './cast-member-type.vo';
 
-export type CastMemberFilter = string;
+export type CastMemberFilter = {
+  type?: CastMemberType | null;
+  name?: string | null;
+};
 
 export class CastMemberSearchParams extends SearchParams<CastMemberFilter> {}
 

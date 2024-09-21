@@ -63,7 +63,7 @@ export class CastMember extends Entity {
     return {
       id: this.id.id,
       name: this.name,
-      type: this.type,
+      type: this.type.type,
       created_at: this.created_at,
     };
   }

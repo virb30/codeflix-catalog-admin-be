@@ -3,7 +3,7 @@ import { IUseCase } from '../../../../shared/application/use-case.interface';
 import { CastMember } from '../../../domain/cast-member.entity';
 import { ICastMemberRepository } from '../../../domain/cast-member.repository';
 import { CreateCastMemberInput } from './create-cast-member.input';
-import { CreateCastMemberOutput } from './create-cast-member.output';
+import { CastMemberOutput } from '../common/cast-member.output';
 
 export class CreateCastMemberUseCase
   implements IUseCase<CreateCastMemberInput, CreateCastMemberOutput>
@@ -27,3 +27,5 @@ export class CreateCastMemberUseCase
     };
   }
 }
+
+export type CreateCastMemberOutput = CastMemberOutput;

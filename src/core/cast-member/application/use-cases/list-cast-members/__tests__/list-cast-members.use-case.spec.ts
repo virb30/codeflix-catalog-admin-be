@@ -1,3 +1,4 @@
+import { CastMemberType } from '../../../../../cast-member/domain/cast-member-type.vo';
 import { CastMember } from '../../../../domain/cast-member.entity';
 import { CastMemberSearchResult } from '../../../../domain/cast-member.repository';
 import { CastMemberInMemoryRepository } from '../../../../infra/db/in-memory/cast-member-in-memory.repository';
@@ -29,7 +30,10 @@ describe('ListCastMemberUseCase Unit Tests', () => {
       last_page: 1,
     });
 
-    const entity = CastMember.create({ name: 'Movie ' });
+    const entity = CastMember.create({
+      name: 'John Doe ',
+      type: CastMemberType.createAnActor(),
+    });
     result = new CastMemberSearchResult({
       items: [entity],
       total: 1,
@@ -48,10 +52,14 @@ describe('ListCastMemberUseCase Unit Tests', () => {
 
   it('should return output sorted by created_at when input param is empty', async () => {
     const items = [
-      new CastMember({ name: 'test 1' }),
+      new CastMember({
+        name: 'test 1',
+        type: CastMemberType.createADirector(),
+      }),
       new CastMember({
         name: 'test 2',
         created_at: new Date(new Date().getTime() + 100),
+        type: CastMemberType.createADirector(),
       }),
     ];
     repository.items = items;
@@ -69,18 +77,23 @@ describe('ListCastMemberUseCase Unit Tests', () => {
     const items = [
       new CastMember({
         name: 'a',
+        type: CastMemberType.createADirector(),
       }),
       new CastMember({
         name: 'AAA',
+        type: CastMemberType.createAnActor(),
       }),
       new CastMember({
         name: 'AaA',
+        type: CastMemberType.createAnActor(),
       }),
       new CastMember({
         name: 'b',
+        type: CastMemberType.createAnActor(),
       }),
       new CastMember({
         name: 'c',
+        type: CastMemberType.createAnActor(),
       }),
     ];
     repository.items = items;
@@ -89,21 +102,21 @@ describe('ListCastMemberUseCase Unit Tests', () => {
       page: 1,
       per_page: 2,
       sort: 'name',
-      filter: 'a',
+      filter: { name: 'a', type: CastMemberType.createAnActor() },
     });
     expect(output).toStrictEqual({
       items: [items[1], items[2]].map(CastMemberOutputMapper.toOutput),
-      total: 3,
+      total: 2,
       current_page: 1,
       per_page: 2,
-      last_page: 2,
+      last_page: 1,
     });
 
     output = await usecase.execute({
       page: 2,
       per_page: 2,
       sort: 'name',
-      filter: 'a',
+      filter: { name: 'a' },
     });
     expect(output).toStrictEqual({
       items: [items[0]].map(CastMemberOutputMapper.toOutput),
@@ -118,7 +131,7 @@ describe('ListCastMemberUseCase Unit Tests', () => {
       per_page: 2,
       sort: 'name',
       sort_dir: 'desc',
-      filter: 'a',
+      filter: { name: 'a' },
     });
     expect(output).toStrictEqual({
       items: [items[0], items[2]].map(CastMemberOutputMapper.toOutput),
@@ -133,7 +146,7 @@ describe('ListCastMemberUseCase Unit Tests', () => {
       per_page: 2,
       sort: 'name',
       sort_dir: 'desc',
-      filter: 'a',
+      filter: { name: 'a' },
     });
     expect(output).toStrictEqual({
       items: [items[1]].map(CastMemberOutputMapper.toOutput),
@@ -141,6 +154,21 @@ describe('ListCastMemberUseCase Unit Tests', () => {
       current_page: 2,
       per_page: 2,
       last_page: 2,
+    });
+
+    output = await usecase.execute({
+      page: 1,
+      per_page: 2,
+      sort: 'name',
+      sort_dir: 'desc',
+      filter: { type: CastMemberType.createADirector() },
+    });
+    expect(output).toStrictEqual({
+      items: [items[0]].map(CastMemberOutputMapper.toOutput),
+      total: 1,
+      current_page: 1,
+      per_page: 2,
+      last_page: 1,
     });
   });
 });

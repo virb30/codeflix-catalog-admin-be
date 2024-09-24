@@ -31,7 +31,7 @@ describe('GetCastMemberUseCase Unit Tests', () => {
   test('should get a cast member', async () => {
     const castMember = CastMember.fake().aCastMember().build();
     repository.items = [castMember];
-    const output = await usecase.execute({ id: castMember.id.id });
+    const output = await usecase.execute({ id: castMember.cast_member_id.id });
     expect(output).toStrictEqual(castMember.toJSON());
   });
 });

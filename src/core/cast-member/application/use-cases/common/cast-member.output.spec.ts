@@ -9,7 +9,7 @@ describe('CastMemberOutputMapper Unit Tests', () => {
     const output = CastMemberOutputMapper.toOutput(entity);
     expect(spyToJSON).toHaveBeenCalled();
     expect(output).toStrictEqual({
-      id: entity.id.id,
+      cast_member_id: entity.cast_member_id.id,
       name: 'John Doe',
       type: entity.type.type,
       created_at: entity.created_at,

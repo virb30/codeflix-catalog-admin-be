@@ -26,7 +26,7 @@ describe('UpdateCastMemberUseCase Unit Tests', () => {
       type?: number;
     };
     expected: {
-      id: string;
+      cast_member_id: string;
       name: string;
       type: number;
       created_at: Date;
@@ -41,7 +41,7 @@ describe('UpdateCastMemberUseCase Unit Tests', () => {
         type: 2,
       },
       expected: {
-        id: id.id,
+        cast_member_id: id.id,
         name: 'Jane Doe',
         type: 2,
         created_at,
@@ -53,7 +53,7 @@ describe('UpdateCastMemberUseCase Unit Tests', () => {
         name: 'Jane Doe',
       },
       expected: {
-        id: id.id,
+        cast_member_id: id.id,
         name: 'Jane Doe',
         type: 1,
         created_at,
@@ -65,7 +65,7 @@ describe('UpdateCastMemberUseCase Unit Tests', () => {
         type: 2,
       },
       expected: {
-        id: id.id,
+        cast_member_id: id.id,
         name: 'John Doe',
         type: 2,
         created_at,
@@ -102,12 +102,12 @@ describe('UpdateCastMemberUseCase Unit Tests', () => {
       type: CastMemberType.createAnActor(),
     });
     repository.items = [entity];
-    let input = { id: entity.id.id, name: 't'.repeat(256) };
+    let input = { id: entity.cast_member_id.id, name: 't'.repeat(256) };
     await expect(() => usecase.execute(input)).rejects.toThrow(
       'Entity Validation Error',
     );
 
-    input = { id: entity.id.id, type: 3 } as any;
+    input = { id: entity.cast_member_id.id, type: 3 } as any;
     await expect(() => usecase.execute(input)).rejects.toThrow(
       'Invalid cast member type: 3',
     );

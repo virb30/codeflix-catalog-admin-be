@@ -7,7 +7,7 @@ import Chance from 'chance';
 type PropOrFactory<T> = T | ((index: number) => T);
 
 export class CastMemberFakeBuilder<TBuild = any> {
-  private _id: PropOrFactory<Uuid> | undefined = undefined;
+  private _cast_member_id: PropOrFactory<Uuid> | undefined = undefined;
   private _name: PropOrFactory<string> = (_index) => this.chance.word();
   private _type: PropOrFactory<CastMemberType> = (_index) =>
     CastMemberType.createAnActor();
@@ -31,7 +31,7 @@ export class CastMemberFakeBuilder<TBuild = any> {
   }
 
   withUuid(valueOrFactory: PropOrFactory<Uuid>) {
-    this._id = valueOrFactory;
+    this._cast_member_id = valueOrFactory;
     return this;
   }
 
@@ -55,8 +55,8 @@ export class CastMemberFakeBuilder<TBuild = any> {
     return this;
   }
 
-  get id() {
-    return this.getValue('id');
+  get cast_member_id() {
+    return this.getValue('cast_member_id');
   }
 
   get name() {
@@ -72,7 +72,7 @@ export class CastMemberFakeBuilder<TBuild = any> {
   }
 
   private getValue(prop: any) {
-    const optional = ['id', 'created_at'];
+    const optional = ['cast_member_id', 'created_at'];
     const privateProp = `_${prop}` as keyof this;
     if (!this[privateProp] && optional.includes(prop)) {
       throw new Error(
@@ -87,7 +87,9 @@ export class CastMemberFakeBuilder<TBuild = any> {
       .fill(undefined)
       .map((_, index) => {
         const castMember = new CastMember({
-          id: !this._id ? undefined : this.callFactory(this._id, index),
+          cast_member_id: !this._cast_member_id
+            ? undefined
+            : this.callFactory(this._cast_member_id, index),
           name: this.callFactory(this._name, index),
           type: this.callFactory(this._type, index),
           ...(this._created_at && {

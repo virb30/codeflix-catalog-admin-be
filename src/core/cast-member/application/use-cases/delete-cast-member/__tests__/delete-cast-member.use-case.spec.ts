@@ -19,7 +19,7 @@ describe('DeleteCastMemberUseCase Unit Tests', () => {
   test('should delete a cast member', async () => {
     const castMember = CastMember.fake().aCastMember().build();
     repository.items = [castMember];
-    await usecase.execute({ id: castMember.id.id });
+    await usecase.execute({ id: castMember.cast_member_id.id });
     expect(repository.items).toHaveLength(0);
   });
 

@@ -1,7 +1,7 @@
 import { CastMember } from '../../../domain/cast-member.entity';
 
 export type CastMemberOutput = {
-  id: string;
+  cast_member_id: string;
   name: string;
   type: number;
   created_at: Date;
@@ -9,9 +9,9 @@ export type CastMemberOutput = {
 
 export class CastMemberOutputMapper {
   static toOutput(entity: CastMember): CastMemberOutput {
-    const { id, ...otherProps } = entity.toJSON();
+    const { cast_member_id, ...otherProps } = entity.toJSON();
     return {
-      id,
+      cast_member_id,
       ...otherProps,
     };
   }

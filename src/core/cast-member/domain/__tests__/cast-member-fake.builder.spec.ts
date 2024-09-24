@@ -8,26 +8,28 @@ describe('CastMemberFakerBuilder Unit Tests', () => {
     const faker = CastMemberFakeBuilder.aCastMember();
 
     test('should throw error when any methods has called', () => {
-      expect(() => faker.id).toThrow(
-        new Error("Property id not have a factory, use 'with' methods"),
+      expect(() => faker.cast_member_id).toThrow(
+        new Error(
+          "Property cast_member_id not have a factory, use 'with' methods",
+        ),
       );
     });
 
     test('should be undefined', () => {
-      expect(faker['_id']).toBeUndefined();
+      expect(faker['_cast_member_id']).toBeUndefined();
     });
 
     test('withUuid', () => {
       const id = new Uuid();
       const $this = faker.withUuid(id);
       expect($this).toBeInstanceOf(CastMemberFakeBuilder);
-      expect(faker['_id']).toBe(id);
+      expect(faker['_cast_member_id']).toBe(id);
 
       faker.withUuid(() => id);
       //@ts-expect-error _id is a callable
-      expect(faker['_id']()).toBe(id);
+      expect(faker['_cast_member_id']()).toBe(id);
 
-      expect(faker.id).toBe(id);
+      expect(faker.cast_member_id).toBe(id);
     });
 
     test('should pass index to id factory', () => {
@@ -43,8 +45,8 @@ describe('CastMemberFakerBuilder Unit Tests', () => {
         .build();
 
       expect(mockFactory).toHaveBeenCalledTimes(2);
-      expect(castMembers[0].id).toBe(id);
-      expect(castMembers[1].id).toBe(id);
+      expect(castMembers[0].cast_member_id).toBe(id);
+      expect(castMembers[1].cast_member_id).toBe(id);
     });
   });
 
@@ -143,7 +145,7 @@ describe('CastMemberFakerBuilder Unit Tests', () => {
     const faker = CastMemberFakeBuilder.aCastMember();
     let castMember = faker.build();
 
-    expect(castMember.id).toBeInstanceOf(Uuid);
+    expect(castMember.cast_member_id).toBeInstanceOf(Uuid);
     expect(typeof castMember.name === 'string').toBeTruthy();
     expect(castMember.type).toBeInstanceOf(CastMemberType);
     expect(castMember.created_at).toBeInstanceOf(Date);
@@ -157,7 +159,7 @@ describe('CastMemberFakerBuilder Unit Tests', () => {
       .withCreatedAt(created_at)
       .build();
 
-    expect(castMember.id.id).toBe(id.id);
+    expect(castMember.cast_member_id.id).toBe(id.id);
     expect(castMember.name).toBe('name test');
     expect(castMember.created_at).toBe(created_at);
   });
@@ -167,7 +169,7 @@ describe('CastMemberFakerBuilder Unit Tests', () => {
     let castMembers = faker.build();
 
     castMembers.forEach((castMember) => {
-      expect(castMember.id).toBeInstanceOf(Uuid);
+      expect(castMember.cast_member_id).toBeInstanceOf(Uuid);
       expect(typeof castMember.name === 'string').toBeTruthy();
       expect(castMember.type).toBeInstanceOf(CastMemberType);
       expect(castMember.type.type).toEqual(CastMemberTypes.ACTOR);
@@ -185,7 +187,7 @@ describe('CastMemberFakerBuilder Unit Tests', () => {
       .build();
 
     castMembers.forEach((castMember) => {
-      expect(castMember.id.id).toBe(id.id);
+      expect(castMember.cast_member_id.id).toBe(id.id);
       expect(castMember.name).toBe('name test');
       expect(castMember.type).toBeInstanceOf(CastMemberType);
       expect(castMember.type.type).toBe(CastMemberTypes.ACTOR);

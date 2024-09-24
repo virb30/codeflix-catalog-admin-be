@@ -26,12 +26,12 @@ describe('CreateCastMemberUseCase Unit Tests', () => {
     });
     expect(spyInsert).toHaveBeenCalledTimes(1);
     expect(output).toStrictEqual({
-      id: repository.items[0].id.id,
+      cast_member_id: repository.items[0].cast_member_id.id,
       name: 'John Doe',
       type: 1,
       created_at: repository.items[0].created_at,
     });
-    expect(output.id).toBeDefined();
+    expect(output.cast_member_id).toBeDefined();
     expect(output.name).toBe('John Doe');
     expect(output.type).toBe(CastMemberTypes.DIRECTOR);
     expect(output.created_at).toBeInstanceOf(Date);

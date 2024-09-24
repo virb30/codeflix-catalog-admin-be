@@ -6,7 +6,7 @@ import { CastMemberValidatorFactory } from './cast-member.validator';
 import { CastMemberFakeBuilder } from './cast-member-fake.builder';
 
 export type CastMemberConstructorProps = {
-  id?: Uuid;
+  cast_member_id?: Uuid;
   name: string;
   type: CastMemberType;
   created_at?: Date;
@@ -18,14 +18,14 @@ export type CastMemberCreateCommmandProps = {
 };
 
 export class CastMember extends Entity {
-  id: Uuid;
+  cast_member_id: Uuid;
   name: string;
   type: CastMemberType;
   created_at: Date;
 
   constructor(props: CastMemberConstructorProps) {
     super();
-    this.id = props.id ?? new Uuid();
+    this.cast_member_id = props.cast_member_id ?? new Uuid();
     this.name = props.name;
     this.type = props.type;
     this.created_at = props.created_at ?? new Date();
@@ -56,12 +56,12 @@ export class CastMember extends Entity {
   }
 
   get entity_id(): ValueObject {
-    return this.id;
+    return this.cast_member_id;
   }
 
   toJSON() {
     return {
-      id: this.id.id,
+      cast_member_id: this.cast_member_id.id,
       name: this.name,
       type: this.type.type,
       created_at: this.created_at,

@@ -1,4 +1,7 @@
-import { CastMemberType } from '../../../../../cast-member/domain/cast-member-type.vo';
+import {
+  CastMemberType,
+  CastMemberTypes,
+} from '../../../../../cast-member/domain/cast-member-type.vo';
 import { CastMember } from '../../../../domain/cast-member.entity';
 import { CastMemberSearchResult } from '../../../../domain/cast-member.repository';
 import { CastMemberInMemoryRepository } from '../../../../infra/db/in-memory/cast-member-in-memory.repository';
@@ -102,7 +105,7 @@ describe('ListCastMemberUseCase Unit Tests', () => {
       page: 1,
       per_page: 2,
       sort: 'name',
-      filter: { name: 'a', type: CastMemberType.createAnActor() },
+      filter: { name: 'a', type: CastMemberTypes.ACTOR },
     });
     expect(output).toStrictEqual({
       items: [items[1], items[2]].map(CastMemberOutputMapper.toOutput),
@@ -161,7 +164,7 @@ describe('ListCastMemberUseCase Unit Tests', () => {
       per_page: 2,
       sort: 'name',
       sort_dir: 'desc',
-      filter: { type: CastMemberType.createADirector() },
+      filter: { type: CastMemberTypes.DIRECTOR },
     });
     expect(output).toStrictEqual({
       items: [items[0]].map(CastMemberOutputMapper.toOutput),

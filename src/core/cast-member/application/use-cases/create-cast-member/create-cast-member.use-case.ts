@@ -21,11 +21,11 @@ export class CreateCastMemberUseCase
       type,
     });
 
-    await this.castMemberRepo.insert(castMember);
-
     if (castMember.notification.hasErrors()) {
       throw new EntityValidationError(castMember.notification.toJSON());
     }
+
+    await this.castMemberRepo.insert(castMember);
 
     return CastMemberOutputMapper.toOutput(castMember);
   }

@@ -78,16 +78,21 @@ export class CastMemberSequelizeRepository implements ICastMemberRepository {
   ): Promise<CastMemberSearchResult> {
     const offset = (props.page - 1) * props.per_page;
     const limit = props.per_page;
+
+    const where = {};
+    if (props.filter && (props.filter.name || props.filter.type)) {
+      if (props.filter.name) {
+        where['name'] = { [Op.like]: `%${props.filter.name}%` };
+      }
+
+      if (props.filter.type) {
+        where['type'] = props.filter.type.type;
+      }
+    }
+
     const { rows: models, count } = await this.categoryModel.findAndCountAll({
       ...(props.filter && {
-        where: {
-          ...(props.filter.name && {
-            name: { [Op.like]: `%${props.filter.name}%` },
-          }),
-          ...(props.filter.type && {
-            type: { [Op.eq]: props.filter.type.type },
-          }),
-        },
+        where,
       }),
       ...(props.sort && this.sortableFields.includes(props.sort)
         ? { order: this.formatSort(props.sort, props.sort_dir) }

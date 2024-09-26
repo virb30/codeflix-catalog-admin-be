@@ -1,4 +1,7 @@
-import { CastMemberType } from '../../../../../cast-member/domain/cast-member-type.vo';
+import {
+  CastMemberType,
+  CastMemberTypes,
+} from '../../../../../cast-member/domain/cast-member-type.vo';
 import { setupSequelize } from '../../../../../shared/infra/testing/helpers';
 import { CastMember } from '../../../../domain/cast-member.entity';
 import { CastMemberSequelizeRepository } from '../../../../infra/db/sequelize/cast-member-sequelize.repository';
@@ -98,7 +101,7 @@ describe('ListCastMembersUseCase Integration Tests', () => {
       sort: 'name',
       filter: {
         name: 'a',
-        type: CastMemberType.createADirector(),
+        type: CastMemberTypes.DIRECTOR,
       },
     });
     expect(output).toStrictEqual({
@@ -116,7 +119,7 @@ describe('ListCastMembersUseCase Integration Tests', () => {
       per_page: 2,
       sort: 'name',
       filter: {
-        type: CastMemberType.createAnActor(),
+        type: CastMemberTypes.ACTOR,
       },
     });
     expect(output).toStrictEqual({

@@ -11,7 +11,7 @@ import { DeleteCategoryUseCase } from '../../../core/category/application/use-ca
 import { GetCategoryUseCase } from '../../../core/category/application/use-cases/get-category/get-category.use-case';
 import { ListCategoriesUseCase } from '../../../core/category/application/use-cases/list-categories/list-categories.use-case';
 import {
-  CreateCateogryFixture,
+  CreateCategoryFixture,
   ListCategoriesFixture,
   UpdateCateogryFixture,
 } from '../testing/category-fixture';
@@ -47,7 +47,7 @@ describe('CategoriesController Integration Tests', () => {
   });
 
   describe('should create a category', () => {
-    const arrange = CreateCateogryFixture.arrangeForCreate();
+    const arrange = CreateCategoryFixture.arrangeForCreate();
     test.each(arrange)(
       'when body is $send_data',
       async ({ send_data, expected }) => {

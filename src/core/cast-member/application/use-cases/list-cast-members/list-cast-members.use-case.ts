@@ -1,5 +1,4 @@
 import {
-  CastMemberFilter,
   CastMemberSearchParams,
   CastMemberSearchResult,
   ICastMemberRepository,
@@ -9,11 +8,11 @@ import {
   PaginationOutputMapper,
 } from '../../../../shared/application/pagination-output';
 import { IUseCase } from '../../../../shared/application/use-case.interface';
-import { SortDirection } from '../../../../shared/domain/repository/search-params';
 import {
   CastMemberOutput,
   CastMemberOutputMapper,
 } from '../common/cast-member.output';
+import { ListCastMembersInput } from './list-cast-members.input';
 
 export class ListCastMembersUseCase
   implements IUseCase<ListCastMembersInput, ListCastMembersOutput>
@@ -21,7 +20,7 @@ export class ListCastMembersUseCase
   constructor(private readonly castMemberRepo: ICastMemberRepository) {}
 
   async execute(input: ListCastMembersInput): Promise<ListCastMembersOutput> {
-    const params = new CastMemberSearchParams(input);
+    const params = CastMemberSearchParams.create(input);
     const searchResult = await this.castMemberRepo.search(params);
     return this.toOutput(searchResult);
   }
@@ -33,11 +32,4 @@ export class ListCastMembersUseCase
   }
 }
 
-export type ListCastMembersInput = {
-  page?: number;
-  per_page?: number;
-  sort?: string | null;
-  sort_dir?: SortDirection | null;
-  filter?: CastMemberFilter | null;
-};
 export type ListCastMembersOutput = PaginationOutput<CastMemberOutput>;

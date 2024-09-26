@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { instanceToPlain } from 'class-transformer';
-import { CreateCateogryFixture } from '../../src/nest-modules/categories-module/testing/category-fixture';
+import { CreateCategoryFixture } from '../../src/nest-modules/categories-module/testing/category-fixture';
 import { ICategoryRepository } from '../../src/core/category/domain/category.repository';
 import { CATEGORY_PROVIDERS } from '../../src/nest-modules/categories-module/categories.provider';
 import { startApp } from '../../src/nest-modules/shared-module/testing/helpers';
@@ -20,7 +20,7 @@ describe('CategoriesController (e2e)', () => {
 
   describe('/categories (POST)', () => {
     describe('should return a response error with 422 status code when request body is invalid', () => {
-      const invalidRequest = CreateCateogryFixture.arrangeInvalidRequest();
+      const invalidRequest = CreateCategoryFixture.arrangeInvalidRequest();
       const arrange = Object.keys(invalidRequest).map((key) => ({
         label: key,
         value: invalidRequest[key],
@@ -37,7 +37,7 @@ describe('CategoriesController (e2e)', () => {
 
     describe('should return a response error with 422 status code when throw EntityValidationError', () => {
       const invalidRequest =
-        CreateCateogryFixture.arrangeForEntityValidationError();
+        CreateCategoryFixture.arrangeForEntityValidationError();
       const arrange = Object.keys(invalidRequest).map((key) => ({
         label: key,
         value: invalidRequest[key],
@@ -53,7 +53,7 @@ describe('CategoriesController (e2e)', () => {
     });
 
     describe('should create a category', () => {
-      const arrange = CreateCateogryFixture.arrangeForCreate();
+      const arrange = CreateCategoryFixture.arrangeForCreate();
       test.each(arrange)(
         'when body is $send_data',
         async ({ send_data, expected }) => {
@@ -62,7 +62,7 @@ describe('CategoriesController (e2e)', () => {
             .send(send_data)
             .expect(201);
 
-          const keysInResponse = CreateCateogryFixture.keysInResponse;
+          const keysInResponse = CreateCategoryFixture.keysInResponse;
           expect(Object.keys(res.body)).toStrictEqual(['data']);
           expect(Object.keys(res.body.data)).toStrictEqual(keysInResponse);
           const id = res.body.data.id;

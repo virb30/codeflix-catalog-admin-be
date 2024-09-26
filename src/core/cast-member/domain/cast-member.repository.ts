@@ -6,7 +6,12 @@ import {
 } from '../../shared/domain/repository/search-params';
 import { SearchResult } from '../../shared/domain/repository/search-result';
 import { CastMember } from './cast-member.entity';
-import { CastMemberType, CastMemberTypes } from './cast-member-type.vo';
+import {
+  CastMemberType,
+  CastMemberTypes,
+  InvalidCastMemberTypeError,
+} from './cast-member-type.vo';
+import { instanceToPlain } from 'class-transformer';
 
 export type CastMemberFilter = {
   type?: CastMemberType | null;
@@ -26,11 +31,20 @@ export class CastMemberSearchParams extends SearchParams<CastMemberFilter> {
       };
     } = {},
   ) {
+    let type = null;
+    try {
+      type = props?.filter?.type
+        ? new CastMemberType(+props.filter.type)
+        : null;
+    } catch (e) {
+      if (e instanceof InvalidCastMemberTypeError) type = null;
+    }
+
     return new CastMemberSearchParams({
       ...props,
       filter: {
         name: props.filter?.name,
-        type: new CastMemberType(props.filter?.type),
+        type,
       },
     });
   }

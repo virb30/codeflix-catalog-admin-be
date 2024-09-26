@@ -12,7 +12,7 @@ export class GetCategoryFixture {
   static keysInResponse = _keysInResponse;
 }
 
-export class CreateCateogryFixture {
+export class CreateCategoryFixture {
   static keysInResponse = _keysInResponse;
 
   static arrangeForCreate() {

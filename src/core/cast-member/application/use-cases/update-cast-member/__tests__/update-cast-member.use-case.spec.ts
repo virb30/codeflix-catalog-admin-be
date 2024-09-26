@@ -26,7 +26,7 @@ describe('UpdateCastMemberUseCase Unit Tests', () => {
       type?: number;
     };
     expected: {
-      cast_member_id: string;
+      id: string;
       name: string;
       type: number;
       created_at: Date;
@@ -41,7 +41,7 @@ describe('UpdateCastMemberUseCase Unit Tests', () => {
         type: 2,
       },
       expected: {
-        cast_member_id: id.id,
+        id: id.id,
         name: 'Jane Doe',
         type: 2,
         created_at,
@@ -53,7 +53,7 @@ describe('UpdateCastMemberUseCase Unit Tests', () => {
         name: 'Jane Doe',
       },
       expected: {
-        cast_member_id: id.id,
+        id: id.id,
         name: 'Jane Doe',
         type: 1,
         created_at,
@@ -65,7 +65,7 @@ describe('UpdateCastMemberUseCase Unit Tests', () => {
         type: 2,
       },
       expected: {
-        cast_member_id: id.id,
+        id: id.id,
         name: 'John Doe',
         type: 2,
         created_at,

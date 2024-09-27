@@ -11,6 +11,7 @@ on:
 
 jobs:
   tests:
+    runs-on: ubuntu-latest
     services:
       db:
         image: mysql:8.0-debian
@@ -18,9 +19,6 @@ jobs:
           MYSQL_DATABASE: micro_videos
           MYSQL_ROOT_PASSWORD: root
 
-    runs-on: ubuntu-latest
-    container:
-      image: node:20-alpine
     env:
       DB_VENDOR: sqlite
       DB_HOST: ':memory:'

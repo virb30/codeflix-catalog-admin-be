@@ -101,6 +101,22 @@ describe('CastMemberFakerBuilder Unit Tests', () => {
     });
   });
 
+  describe('type prop', () => {
+    const faker = CastMemberFakeBuilder.aCastMember();
+
+    test('withType', () => {
+      const actor = CastMemberType.createAnActor();
+      const $this = faker.withType(actor);
+      expect($this).toBeInstanceOf(CastMemberFakeBuilder);
+      expect(faker['_type']).toBe(actor);
+
+      faker.withType(() => actor);
+      //@ts-expect-error description is callable
+      expect(faker['_type']()).toBe(actor);
+      expect(faker.type).toBe(actor);
+    });
+  });
+
   describe('created_at prop', () => {
     const faker = CastMemberFakeBuilder.aCastMember();
 
@@ -126,7 +142,7 @@ describe('CastMemberFakerBuilder Unit Tests', () => {
       expect(faker.created_at).toBe(date);
     });
 
-    test('should pass index to description factory', () => {
+    test('should pass index to created_at factory', () => {
       const date = new Date();
       faker.withCreatedAt((index) => new Date(date.getTime() + index + 2));
       const castMember = faker.build();

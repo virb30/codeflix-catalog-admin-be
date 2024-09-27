@@ -11,7 +11,6 @@ import {
   CastMemberTypes,
   InvalidCastMemberTypeError,
 } from './cast-member-type.vo';
-import { instanceToPlain } from 'class-transformer';
 
 export type CastMemberFilter = {
   type?: CastMemberType | null;

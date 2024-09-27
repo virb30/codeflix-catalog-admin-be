@@ -39,6 +39,7 @@ const config: Config = {
     '.input.ts',
     '.d.ts',
     'config.ts',
+    'migrations/*.ts',
   ],
 
   // Indicates which provider should be used to instrument code for coverage

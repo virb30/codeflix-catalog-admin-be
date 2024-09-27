@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DB_VENDOR: sqlite
-      DB_HOST: :memory:
+      DB_HOST: ':memory:'
       DB_LOGGING: false
       DB_AUTO_LOAD_MODELS: true
 

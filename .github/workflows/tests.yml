@@ -18,7 +18,7 @@ jobs:
         env:
           MYSQL_DATABASE: micro_videos
           MYSQL_ROOT_PASSWORD: root
-
+    container: node
     env:
       DB_VENDOR: sqlite
       DB_HOST: ':memory:'

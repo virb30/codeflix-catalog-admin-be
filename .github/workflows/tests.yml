@@ -20,7 +20,7 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: node:20
+      image: node:20-alpine
     env:
       DB_VENDOR: sqlite
       DB_HOST: ':memory:'

@@ -4,10 +4,12 @@ import { UpdateCateogryFixture } from '../../src/nest-modules/categories-module/
 import { ICategoryRepository } from '../../src/core/category/domain/category.repository';
 import { CATEGORY_PROVIDERS } from '../../src/nest-modules/categories-module/categories.provider';
 import { startApp } from '../../src/nest-modules/shared-module/testing/helpers';
-import { Uuid } from '../../src/core/shared/domain/value-objects/uuid.vo';
 import { CategoriesController } from '../../src/nest-modules/categories-module/categories.controller';
 import { CategoryOutputMapper } from '../../src/core/category/application/use-cases/common/category-output';
-import { Category } from '../../src/core/category/domain/category.aggregate';
+import {
+  Category,
+  CategoryId,
+} from '../../src/core/category/domain/category.aggregate';
 
 describe('CategoriesController (e2e)', () => {
   const uuid = '86768766-12eb-40ea-b00c-4f8a81528bd5';
@@ -116,7 +118,9 @@ describe('CategoriesController (e2e)', () => {
           expect(Object.keys(res.body)).toStrictEqual(['data']);
           expect(Object.keys(res.body.data)).toStrictEqual(keysInResponse);
           const id = res.body.data.id;
-          const categoryUpdated = await categoryRepo.findById(new Uuid(id));
+          const categoryUpdated = await categoryRepo.findById(
+            new CategoryId(id),
+          );
 
           const presenter = CategoriesController.serialize(
             CategoryOutputMapper.toOutput(categoryUpdated),

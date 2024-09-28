@@ -1,5 +1,5 @@
 import { CategoryModel } from '../category.model';
-import { Uuid } from '../../../../../shared/domain/value-objects/uuid.vo';
+import { CategoryId } from '../../../../domain/category.aggregate'
 import { CategoryModelMapper } from '../category-model-mapper';
 import { EntityValidationError } from '../../../../../shared/domain/validators/validation.error';
 import { Category } from '../../../../domain/category.aggregate';
@@ -10,7 +10,7 @@ describe('CategoryModelMapper Integration Tests', () => {
 
   test('should throws error when category is invalid', () => {
     expect.assertions(2);
-    const category_id = new Uuid();
+    const category_id = new CategoryId();
     const model = CategoryModel.build({
       category_id: category_id.id,
       name: 'a'.repeat(256),
@@ -32,7 +32,7 @@ describe('CategoryModelMapper Integration Tests', () => {
 
   test('should convert a category model to a category entity', () => {
     const created_at = new Date();
-    const category_id = new Uuid();
+    const category_id = new CategoryId();
     const model = CategoryModel.build({
       category_id: category_id.id,
       name: 'some name',
@@ -54,7 +54,7 @@ describe('CategoryModelMapper Integration Tests', () => {
 
   test('should convert a category entity to a category model', () => {
     const created_at = new Date();
-    const category_id = new Uuid();
+    const category_id = new CategoryId();
     const entity = new Category({
       category_id,
       name: 'some name',

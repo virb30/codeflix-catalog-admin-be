@@ -4,8 +4,10 @@ import {
   SearchParams,
   SortDirection,
 } from '../../../../shared/domain/repository/search-params';
-import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
-import { CastMember } from '../../../domain/cast-member.entity';
+import {
+  CastMember,
+  CastMemberId,
+} from '../../../domain/cast-member.aggregate';
 import {
   CastMemberFilter,
   CastMemberSearchResult,
@@ -22,18 +24,18 @@ export class CastMemberSequelizeRepository implements ICastMemberRepository {
     },
   };
 
-  constructor(private categoryModel: typeof CastMemberModel) {}
+  constructor(private castMemberModel: typeof CastMemberModel) {}
 
   async insert(entity: CastMember): Promise<void> {
     const modelProps = CastMemberModelMapper.toModel(entity);
-    await this.categoryModel.create(modelProps.toJSON());
+    await this.castMemberModel.create(modelProps.toJSON());
   }
 
   async bulkInsert(entities: CastMember[]): Promise<void> {
     const modelsProps = entities.map((entity) =>
       CastMemberModelMapper.toModel(entity).toJSON(),
     );
-    await this.categoryModel.bulkCreate(modelsProps);
+    await this.castMemberModel.bulkCreate(modelsProps);
   }
 
   async update(entity: CastMember): Promise<void> {
@@ -43,31 +45,31 @@ export class CastMemberSequelizeRepository implements ICastMemberRepository {
       throw new NotFoundError(id, this.getEntity());
     }
     const modelProps = CastMemberModelMapper.toModel(entity);
-    await this.categoryModel.update(modelProps.toJSON(), {
+    await this.castMemberModel.update(modelProps.toJSON(), {
       where: { cast_member_id: id },
     });
   }
 
-  async delete(cast_member_id: Uuid): Promise<void> {
+  async delete(cast_member_id: CastMemberId): Promise<void> {
     const id = cast_member_id.id;
     const model = await this._get(id);
     if (!model) {
       throw new NotFoundError(id, this.getEntity());
     }
-    await this.categoryModel.destroy({ where: { cast_member_id: id } });
+    await this.castMemberModel.destroy({ where: { cast_member_id: id } });
   }
 
-  async findById(entity_id: Uuid): Promise<CastMember | null> {
+  async findById(entity_id: CastMemberId): Promise<CastMember | null> {
     const model = await this._get(entity_id.id);
     return model ? CastMemberModelMapper.toEntity(model) : null;
   }
 
   private async _get(id: string) {
-    return await this.categoryModel.findByPk(id);
+    return await this.castMemberModel.findByPk(id);
   }
 
   async findAll(): Promise<CastMember[]> {
-    const models = await this.categoryModel.findAll();
+    const models = await this.castMemberModel.findAll();
     return models.map((model) => {
       return CastMemberModelMapper.toEntity(model);
     });
@@ -90,7 +92,7 @@ export class CastMemberSequelizeRepository implements ICastMemberRepository {
       }
     }
 
-    const { rows: models, count } = await this.categoryModel.findAndCountAll({
+    const { rows: models, count } = await this.castMemberModel.findAndCountAll({
       ...(props.filter && {
         where,
       }),
@@ -111,7 +113,7 @@ export class CastMemberSequelizeRepository implements ICastMemberRepository {
   }
 
   private formatSort(sort: string, sort_dir: SortDirection) {
-    const dialect = this.categoryModel.sequelize.getDialect() as 'mysql';
+    const dialect = this.castMemberModel.sequelize.getDialect() as 'mysql';
     if (this.orderBy[dialect] && this.orderBy[dialect][sort]) {
       return this.orderBy[dialect][sort](sort_dir);
     }

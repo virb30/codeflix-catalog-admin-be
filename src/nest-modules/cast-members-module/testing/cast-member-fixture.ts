@@ -3,7 +3,7 @@ import {
   CastMemberType,
   CastMemberTypes,
 } from '../../../core/cast-member/domain/cast-member-type.vo';
-import { CastMember } from '../../../core/cast-member/domain/cast-member.entity';
+import { CastMember } from '../../../core/cast-member/domain/cast-member.aggregate';
 
 const _keysInResponse = ['id', 'name', 'type', 'created_at'];
 

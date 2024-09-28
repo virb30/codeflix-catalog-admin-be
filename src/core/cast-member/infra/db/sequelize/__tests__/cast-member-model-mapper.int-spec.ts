@@ -1,8 +1,10 @@
 import { CastMemberModel } from '../cast-member.model';
-import { Uuid } from '../../../../../shared/domain/value-objects/uuid.vo';
 import { CastMemberModelMapper } from '../cast-member-model-mapper';
 import { EntityValidationError } from '../../../../../shared/domain/validators/validation.error';
-import { CastMember } from '../../../../domain/cast-member.entity';
+import {
+  CastMember,
+  CastMemberId,
+} from '../../../../domain/cast-member.aggregate';
 import { setupSequelize } from '../../../../../shared/infra/testing/helpers';
 import {
   CastMemberType,
@@ -15,7 +17,7 @@ describe('CastMemberModelMapper Integration Tests', () => {
 
   test('should throws error when cast member is invalid', () => {
     expect.assertions(2);
-    const cast_member_id = new Uuid();
+    const cast_member_id = new CastMemberId();
     const model = CastMemberModel.build({
       cast_member_id: cast_member_id.id,
       name: 'a'.repeat(256),
@@ -38,7 +40,7 @@ describe('CastMemberModelMapper Integration Tests', () => {
 
   test('should throws error when cast member is invalid', () => {
     expect.assertions(1);
-    const cast_member_id = new Uuid();
+    const cast_member_id = new CastMemberId();
     const model = CastMemberModel.build({
       cast_member_id: cast_member_id.id,
       name: 'a'.repeat(256),
@@ -56,7 +58,7 @@ describe('CastMemberModelMapper Integration Tests', () => {
 
   test('should convert a cast member model to a cast member entity', () => {
     const created_at = new Date();
-    const cast_member_id = new Uuid();
+    const cast_member_id = new CastMemberId();
     const model = CastMemberModel.build({
       cast_member_id: cast_member_id.id,
       name: 'some name',
@@ -76,7 +78,7 @@ describe('CastMemberModelMapper Integration Tests', () => {
 
   test('should convert a cast member entity to a cast member model', () => {
     const created_at = new Date();
-    const cast_member_id = new Uuid();
+    const cast_member_id = new CastMemberId();
     const entity = new CastMember({
       cast_member_id,
       name: 'some name',

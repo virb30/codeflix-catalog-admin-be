@@ -5,7 +5,7 @@ import { CategoryFakeBuilder } from './category-fake.builder';
 import { CategoryValidatorFactory } from './category.validator';
 
 export type CategoryConstructorProps = {
-  category_id?: Uuid;
+  category_id?: CategoryId;
   name: string;
   description?: string | null;
   is_active?: boolean;

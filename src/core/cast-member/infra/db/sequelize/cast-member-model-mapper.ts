@@ -1,7 +1,9 @@
 import { CastMemberType } from '../../../../cast-member/domain/cast-member-type.vo';
 import { EntityValidationError } from '../../../../shared/domain/validators/validation.error';
-import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
-import { CastMember } from '../../../domain/cast-member.entity';
+import {
+  CastMember,
+  CastMemberId,
+} from '../../../domain/cast-member.aggregate';
 import { CastMemberModel } from './cast-member.model';
 
 export class CastMemberModelMapper {
@@ -16,7 +18,7 @@ export class CastMemberModelMapper {
 
   static toEntity(model: CastMemberModel): CastMember {
     const category = new CastMember({
-      cast_member_id: new Uuid(model.cast_member_id),
+      cast_member_id: new CastMemberId(model.cast_member_id),
       name: model.name,
       type: CastMemberType.create(parseInt(model.type)),
       created_at: model.created_at,

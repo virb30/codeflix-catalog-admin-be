@@ -1,6 +1,5 @@
-import { Uuid } from '../../../shared/domain/value-objects/uuid.vo';
 import { CastMemberType, CastMemberTypes } from '../cast-member-type.vo';
-import { CastMember } from '../cast-member.entity';
+import { CastMember, CastMemberId } from '../cast-member.aggregate';
 
 describe('CastMember Unit Tests', () => {
   beforeEach(() => {
@@ -23,7 +22,7 @@ describe('CastMember Unit Tests', () => {
 
     test('should create a cast member with all values', () => {
       const created_at = new Date();
-      const id = new Uuid();
+      const id = new CastMemberId();
       const castMember = new CastMember({
         cast_member_id: id,
         name: 'John Doe',
@@ -45,7 +44,7 @@ describe('CastMember Unit Tests', () => {
         type: CastMemberType.createADirector(),
       });
       expect(castMember).toBeInstanceOf(CastMember);
-      expect(castMember.cast_member_id).toBeInstanceOf(Uuid);
+      expect(castMember.cast_member_id).toBeInstanceOf(CastMemberId);
       expect(castMember.name).toBe('John Doe');
       expect(castMember.type.type).toBe(CastMemberTypes.DIRECTOR);
       expect(castMember.created_at).toBeInstanceOf(Date);

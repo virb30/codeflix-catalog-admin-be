@@ -1,4 +1,4 @@
-import { CastMember } from 'src/core/cast-member/domain/cast-member.entity';
+import { CastMember } from 'src/core/cast-member/domain/cast-member.aggregate';
 import { SortDirection } from '../../../../shared/domain/repository/search-params';
 import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
 import { InMemorySearchableRepository } from '../../../../shared/infra/db/in-memory/in-memory.repository';

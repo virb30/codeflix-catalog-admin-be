@@ -1,10 +1,10 @@
 import { NotFoundError } from '../../../../../shared/domain/errors/not-found.error';
-import { CastMember } from '../../../../../cast-member/domain/cast-member.entity';
-import { CastMemberInMemoryRepository } from '../../../../../cast-member/infra/db/in-memory/cast-member-in-memory.repository';
 import {
-  InvalidUuidError,
-  Uuid,
-} from '../../../../../shared/domain/value-objects/uuid.vo';
+  CastMember,
+  CastMemberId,
+} from '../../../../domain/cast-member.aggregate';
+import { CastMemberInMemoryRepository } from '../../../../../cast-member/infra/db/in-memory/cast-member-in-memory.repository';
+import { InvalidUuidError } from '../../../../../shared/domain/value-objects/uuid.vo';
 import { UpdateCastMemberUseCase } from '../update-cast-member.use-case';
 import { CastMemberType } from '../../../../../cast-member/domain/cast-member-type.vo';
 
@@ -17,7 +17,7 @@ describe('UpdateCastMemberUseCase Unit Tests', () => {
     usecase = new UpdateCastMemberUseCase(repository);
   });
 
-  const id = new Uuid();
+  const id = new CastMemberId();
   const created_at = new Date();
   type Arrange = {
     input: {
@@ -118,7 +118,7 @@ describe('UpdateCastMemberUseCase Unit Tests', () => {
       usecase.execute({ id: 'fake id', name: 'fake' }),
     ).rejects.toThrow(new InvalidUuidError());
 
-    const uuid = new Uuid();
+    const uuid = new CastMemberId();
 
     await expect(() =>
       usecase.execute({ id: uuid.id, name: 'fake' }),

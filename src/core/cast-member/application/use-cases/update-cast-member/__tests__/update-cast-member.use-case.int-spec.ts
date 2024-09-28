@@ -3,9 +3,11 @@ import {
   CastMemberTypes,
 } from 'src/core/cast-member/domain/cast-member-type.vo';
 import { NotFoundError } from '../../../../../shared/domain/errors/not-found.error';
-import { Uuid } from '../../../../../shared/domain/value-objects/uuid.vo';
 import { setupSequelize } from '../../../../../shared/infra/testing/helpers';
-import { CastMember } from '../../../../domain/cast-member.entity';
+import {
+  CastMember,
+  CastMemberId,
+} from '../../../../domain/cast-member.aggregate';
 import { CastMemberSequelizeRepository } from '../../../../infra/db/sequelize/cast-member-sequelize.repository';
 import { CastMemberModel } from '../../../../infra/db/sequelize/cast-member.model';
 import { UpdateCastMemberUseCase } from '../update-cast-member.use-case';
@@ -22,7 +24,7 @@ describe('UpdateCastMemberUseCase Integration Tests', () => {
   });
 
   it('should throws error when entity not found', async () => {
-    const uuid = new Uuid();
+    const uuid = new CastMemberId();
     await expect(() =>
       useCase.execute({ id: uuid.id, name: 'fake' }),
     ).rejects.toThrow(new NotFoundError(uuid.id, CastMember));
@@ -106,7 +108,9 @@ describe('UpdateCastMemberUseCase Integration Tests', () => {
         ...('name' in i.input && { name: i.input.name }),
         ...('type' in i.input && { type: i.input.type }),
       });
-      const entityUpdated = await repository.findById(new Uuid(i.input.id));
+      const entityUpdated = await repository.findById(
+        new CastMemberId(i.input.id),
+      );
       expect(output).toStrictEqual({
         id: entity.cast_member_id.id,
         name: i.expected.name,

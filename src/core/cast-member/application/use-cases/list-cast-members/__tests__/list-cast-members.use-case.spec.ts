@@ -2,7 +2,7 @@ import {
   CastMemberType,
   CastMemberTypes,
 } from '../../../../../cast-member/domain/cast-member-type.vo';
-import { CastMember } from '../../../../domain/cast-member.entity';
+import { CastMember, CastMemberId } from '../../../../domain/cast-member.aggregate';
 import { CastMemberSearchResult } from '../../../../domain/cast-member.repository';
 import { CastMemberInMemoryRepository } from '../../../../infra/db/in-memory/cast-member-in-memory.repository';
 import { CastMemberOutputMapper } from '../../common/cast-member.output';

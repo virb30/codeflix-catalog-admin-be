@@ -21,7 +21,7 @@ import {
 } from '../cast-members.presenter';
 import { CastMemberOutputMapper } from '../../../core/cast-member/application/use-cases/common/cast-member.output';
 import { Uuid } from '../../../core/shared/domain/value-objects/uuid.vo';
-import { CastMember } from '../../../core/cast-member/domain/cast-member.entity';
+import { CastMember } from '../../../core/cast-member/domain/cast-member.aggregate';
 
 describe('CastMembersController Integration Tests', () => {
   let controller: CastMembersController;

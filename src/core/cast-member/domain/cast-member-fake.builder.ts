@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Uuid } from '../../shared/domain/value-objects/uuid.vo';
 import { CastMemberType } from './cast-member-type.vo';
-import { CastMember } from './cast-member.entity';
+import { CastMember } from './cast-member.aggregate';
 import Chance from 'chance';
 
 type PropOrFactory<T> = T | ((index: number) => T);

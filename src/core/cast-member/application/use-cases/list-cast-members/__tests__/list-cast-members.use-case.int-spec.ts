@@ -3,7 +3,7 @@ import {
   CastMemberTypes,
 } from '../../../../../cast-member/domain/cast-member-type.vo';
 import { setupSequelize } from '../../../../../shared/infra/testing/helpers';
-import { CastMember } from '../../../../domain/cast-member.entity';
+import { CastMember } from '../../../../domain/cast-member.aggregate';
 import { CastMemberSequelizeRepository } from '../../../../infra/db/sequelize/cast-member-sequelize.repository';
 import { CastMemberModel } from '../../../../infra/db/sequelize/cast-member.model';
 import { CastMemberOutputMapper } from '../../common/cast-member.output';

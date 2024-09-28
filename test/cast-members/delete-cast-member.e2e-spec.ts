@@ -2,7 +2,7 @@ import request from 'supertest';
 import { ICastMemberRepository } from '../../src/core/cast-member/domain/cast-member.repository';
 import { CAST_MEMBER_PROVIDERS } from '../../src/nest-modules/cast-members-module/cast-members.provider';
 import { startApp } from '../../src/nest-modules/shared-module/testing/helpers';
-import { CastMember } from '../../src/core/cast-member/domain/cast-member.entity';
+import { CastMember } from '../../src/core/cast-member/domain/cast-member.aggregate';
 
 describe('CastMembersController (e2e)', () => {
   describe('/cast-members/:id (DELETE)', () => {

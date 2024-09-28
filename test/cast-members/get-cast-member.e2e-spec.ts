@@ -3,7 +3,7 @@ import { instanceToPlain } from 'class-transformer';
 import { ICastMemberRepository } from '../../src/core/cast-member/domain/cast-member.repository';
 import { CAST_MEMBER_PROVIDERS } from '../../src/nest-modules/cast-members-module/cast-members.provider';
 import { startApp } from '../../src/nest-modules/shared-module/testing/helpers';
-import { CastMember } from '../../src/core/cast-member/domain/cast-member.entity';
+import { CastMember } from '../../src/core/cast-member/domain/cast-member.aggregate';
 import { GetCastMemberFixture } from '../../src/nest-modules/cast-members-module/testing/cast-member-fixture';
 import { CastMembersController } from '../../src/nest-modules/cast-members-module/cast-members.controller';
 import { CastMemberOutputMapper } from '../../src/core/cast-member/application/use-cases/common/cast-member.output';

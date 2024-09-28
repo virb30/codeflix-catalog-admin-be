@@ -53,12 +53,12 @@ describe('CategoriesController Integration Tests', () => {
       async ({ send_data, expected }) => {
         const presenter = await controller.create(send_data);
         const entity = await repository.findById(new Uuid(presenter.id));
-        expect(entity.toJSON()).toStrictEqual({
+        expect(entity!.toJSON()).toStrictEqual({
           category_id: presenter.id,
           created_at: presenter.created_at,
           ...expected,
         });
-        const output = CategoryOutputMapper.toOutput(entity);
+        const output = CategoryOutputMapper.toOutput(entity!);
         expect(presenter).toEqual(new CategoryPresenter(output));
       },
     );
@@ -80,7 +80,7 @@ describe('CategoriesController Integration Tests', () => {
           send_data,
         );
         const entity = await repository.findById(new Uuid(presenter.id));
-        expect(entity.toJSON()).toStrictEqual({
+        expect(entity!.toJSON()).toStrictEqual({
           category_id: presenter.id,
           created_at: presenter.created_at,
           name: expected.name ?? category.name,
@@ -93,7 +93,7 @@ describe('CategoriesController Integration Tests', () => {
               ? expected.is_active
               : category.is_active,
         });
-        const output = CategoryOutputMapper.toOutput(entity);
+        const output = CategoryOutputMapper.toOutput(entity!);
         expect(presenter).toEqual(new CategoryPresenter(output));
       },
     );

@@ -1,6 +1,9 @@
-import { CastMember } from 'src/core/cast-member/domain/cast-member.aggregate';
+import {
+  CastMember,
+  CastMemberId,
+} from '../../../../cast-member/domain/cast-member.aggregate';
 import { SortDirection } from '../../../../shared/domain/repository/search-params';
-import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
+
 import { InMemorySearchableRepository } from '../../../../shared/infra/db/in-memory/in-memory.repository';
 import {
   CastMemberFilter,
@@ -8,14 +11,18 @@ import {
 } from '../../../../cast-member/domain/cast-member.repository';
 
 export class CastMemberInMemoryRepository
-  extends InMemorySearchableRepository<CastMember, Uuid, CastMemberFilter>
+  extends InMemorySearchableRepository<
+    CastMember,
+    CastMemberId,
+    CastMemberFilter
+  >
   implements ICastMemberRepository
 {
   sortableFields: string[] = ['name', 'created_at'];
 
   protected async applyFilter(
     items: CastMember[],
-    filter: CastMemberFilter,
+    filter: CastMemberFilter | null,
   ): Promise<CastMember[]> {
     if (!filter) {
       return items;

@@ -1,21 +1,20 @@
 import { SortDirection } from '../../../../shared/domain/repository/search-params';
-import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
 import { InMemorySearchableRepository } from '../../../../shared/infra/db/in-memory/in-memory.repository';
-import { Category } from '../../../domain/category.aggregate';
+import { Category, CategoryId } from '../../../domain/category.aggregate';
 import {
   CategoryFilter,
   ICategoryRepository,
 } from '../../../domain/category.repository';
 
 export class CategoryInMemoryRepository
-  extends InMemorySearchableRepository<Category, Uuid>
+  extends InMemorySearchableRepository<Category, CategoryId>
   implements ICategoryRepository
 {
   sortableFields: string[] = ['name', 'created_at'];
 
   protected async applyFilter(
     items: Category[],
-    filter: CategoryFilter,
+    filter: CategoryFilter | null,
   ): Promise<Category[]> {
     if (!filter) {
       return items;

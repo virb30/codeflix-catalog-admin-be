@@ -29,7 +29,7 @@ describe('CastMemberSequelizeRepository Integration Test', () => {
     await repository.insert(castMember);
 
     const model = await CastMemberModel.findByPk(castMember.cast_member_id.id);
-    expect(model.toJSON()).toMatchObject({
+    expect(model!.toJSON()).toMatchObject({
       cast_member_id: castMember.cast_member_id.id,
       name: castMember.name,
       type: castMember.type.type,
@@ -44,7 +44,7 @@ describe('CastMemberSequelizeRepository Integration Test', () => {
     const castMember = CastMember.fake().aCastMember().build();
     await repository.insert(castMember);
     castMemberFound = await repository.findById(castMember.cast_member_id);
-    expect(castMember.toJSON()).toStrictEqual(castMemberFound.toJSON());
+    expect(castMember.toJSON()).toStrictEqual(castMemberFound!.toJSON());
   });
 
   it('should return all cast members', async () => {
@@ -71,7 +71,7 @@ describe('CastMemberSequelizeRepository Integration Test', () => {
     const castMemberFound = await repository.findById(
       castMember.cast_member_id,
     );
-    expect(castMember.toJSON()).toStrictEqual(castMemberFound.toJSON());
+    expect(castMember.toJSON()).toStrictEqual(castMemberFound!.toJSON());
   });
 
   it('should throw error on delete when a cast member not found', async () => {
@@ -103,7 +103,7 @@ describe('CastMemberSequelizeRepository Integration Test', () => {
       await repository.bulkInsert(castMembers);
       const spyToEntity = jest.spyOn(CastMemberModelMapper, 'toEntity');
       const searchOutput = await repository.search(
-        new CastMemberSearchParams(),
+        CastMemberSearchParams.create(),
       );
       expect(searchOutput).toBeInstanceOf(CastMemberSearchResult);
       expect(spyToEntity).toHaveBeenCalledTimes(15);
@@ -136,7 +136,7 @@ describe('CastMemberSequelizeRepository Integration Test', () => {
         .build();
       await repository.bulkInsert(castMembers);
       const searchOutput = await repository.search(
-        new CastMemberSearchParams(),
+        CastMemberSearchParams.create(),
       );
       const items = searchOutput.items.map((item) => item.toJSON());
       [...items].reverse().forEach((item, index) => {
@@ -175,7 +175,7 @@ describe('CastMemberSequelizeRepository Integration Test', () => {
       await repository.bulkInsert(castMembers);
 
       let searchOutput = await repository.search(
-        new CastMemberSearchParams({
+        CastMemberSearchParams.create({
           page: 1,
           per_page: 2,
           filter: {
@@ -194,7 +194,7 @@ describe('CastMemberSequelizeRepository Integration Test', () => {
       );
 
       searchOutput = await repository.search(
-        new CastMemberSearchParams({
+        CastMemberSearchParams.create({
           page: 2,
           per_page: 2,
           filter: {
@@ -213,12 +213,12 @@ describe('CastMemberSequelizeRepository Integration Test', () => {
       );
 
       searchOutput = await repository.search(
-        new CastMemberSearchParams({
+        CastMemberSearchParams.create({
           page: 1,
           per_page: 2,
           filter: {
             name: 'TEST',
-            type: CastMemberType.createADirector(),
+            type: CastMemberType.createADirector().type,
           },
         }),
       );
@@ -247,7 +247,7 @@ describe('CastMemberSequelizeRepository Integration Test', () => {
 
       const arrange = [
         {
-          params: new CastMemberSearchParams({
+          params: CastMemberSearchParams.create({
             page: 1,
             per_page: 2,
             sort: 'name',
@@ -260,7 +260,7 @@ describe('CastMemberSequelizeRepository Integration Test', () => {
           }),
         },
         {
-          params: new CastMemberSearchParams({
+          params: CastMemberSearchParams.create({
             page: 2,
             per_page: 2,
             sort: 'name',
@@ -273,7 +273,7 @@ describe('CastMemberSequelizeRepository Integration Test', () => {
           }),
         },
         {
-          params: new CastMemberSearchParams({
+          params: CastMemberSearchParams.create({
             page: 1,
             per_page: 2,
             sort: 'name',
@@ -287,7 +287,7 @@ describe('CastMemberSequelizeRepository Integration Test', () => {
           }),
         },
         {
-          params: new CastMemberSearchParams({
+          params: CastMemberSearchParams.create({
             page: 2,
             per_page: 2,
             sort: 'name',
@@ -319,7 +319,7 @@ describe('CastMemberSequelizeRepository Integration Test', () => {
 
       const arrange = [
         {
-          search_params: new CastMemberSearchParams({
+          search_params: CastMemberSearchParams.create({
             page: 1,
             per_page: 2,
             sort: 'name',
@@ -335,7 +335,7 @@ describe('CastMemberSequelizeRepository Integration Test', () => {
           }),
         },
         {
-          search_params: new CastMemberSearchParams({
+          search_params: CastMemberSearchParams.create({
             page: 2,
             per_page: 2,
             sort: 'name',

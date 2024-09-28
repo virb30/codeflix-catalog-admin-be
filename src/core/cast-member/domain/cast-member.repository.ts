@@ -17,7 +17,9 @@ export type CastMemberFilter = {
 };
 
 export class CastMemberSearchParams extends SearchParams<CastMemberFilter> {
-  constructor(props: SearchParamsConstructorProps<CastMemberFilter> = {}) {
+  private constructor(
+    props: SearchParamsConstructorProps<CastMemberFilter> = {},
+  ) {
     super(props);
   }
 
@@ -29,7 +31,7 @@ export class CastMemberSearchParams extends SearchParams<CastMemberFilter> {
       };
     } = {},
   ) {
-    let type = null;
+    let type: CastMemberType | null = null;
     try {
       type = props?.filter?.type
         ? new CastMemberType(+props.filter.type)

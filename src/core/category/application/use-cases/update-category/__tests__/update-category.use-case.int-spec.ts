@@ -1,5 +1,5 @@
 import { NotFoundError } from '../../../../../shared/domain/errors/not-found.error';
-import { CategoryId } from '../../../../domain/category.aggregate'
+import { CategoryId } from '../../../../domain/category.aggregate';
 import { setupSequelize } from '../../../../../shared/infra/testing/helpers';
 import { Category } from '../../../../domain/category.aggregate';
 import { CategorySequelizeRepository } from '../../../../infra/db/sequelize/category-sequelize.repository';
@@ -147,15 +147,17 @@ describe('UpdateCategoryUseCase Integration Tests', () => {
         ...('description' in i.input && { description: i.input.description }),
         ...('is_active' in i.input && { is_active: i.input.is_active }),
       });
-      const entityUpdated = await repository.findById(new CategoryId(i.input.id));
+      const entityUpdated = await repository.findById(
+        new CategoryId(i.input.id),
+      );
       expect(output).toStrictEqual({
         id: entity.category_id.id,
         name: i.expected.name,
         description: i.expected.description,
         is_active: i.expected.is_active,
-        created_at: entityUpdated.created_at,
+        created_at: entityUpdated!.created_at,
       });
-      expect(entityUpdated.toJSON()).toStrictEqual({
+      expect(entityUpdated!.toJSON()).toStrictEqual({
         category_id: entity.category_id.id,
         name: i.expected.name,
         description: i.expected.description,

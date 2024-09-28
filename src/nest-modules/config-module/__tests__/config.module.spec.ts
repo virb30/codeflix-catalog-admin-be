@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
 
 function expectValidate(schema: Joi.Schema, value: any) {
+  //@ts-expect-error - if error not exists, the test will fail
   return expect(schema.validate(value, { abortEarly: false }).error.message);
 }
 

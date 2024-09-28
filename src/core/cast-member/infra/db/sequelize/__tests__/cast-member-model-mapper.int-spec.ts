@@ -18,6 +18,7 @@ describe('CastMemberModelMapper Integration Tests', () => {
   test('should throws error when cast member is invalid', () => {
     expect.assertions(2);
     const cast_member_id = new CastMemberId();
+    //@ts-expect-error - This is an invalid cast member
     const model = CastMemberModel.build({
       cast_member_id: cast_member_id.id,
       name: 'a'.repeat(256),
@@ -38,9 +39,10 @@ describe('CastMemberModelMapper Integration Tests', () => {
     }
   });
 
-  test('should throws error when cast member is invalid', () => {
+  test('should throws error when cast member type is invalid', () => {
     expect.assertions(1);
     const cast_member_id = new CastMemberId();
+    //@ts-expect-error - This is an invalid cast member
     const model = CastMemberModel.build({
       cast_member_id: cast_member_id.id,
       name: 'a'.repeat(256),

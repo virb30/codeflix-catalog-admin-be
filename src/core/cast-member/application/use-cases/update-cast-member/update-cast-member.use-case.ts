@@ -27,11 +27,11 @@ export class UpdateCastMemberUseCase
     }
 
     if ('name' in input) {
-      castMember.changeName(input.name);
+      castMember.changeName(input.name!);
     }
 
     if ('type' in input) {
-      const type = CastMemberType.create(input.type);
+      const type = CastMemberType.create(input.type!);
       castMember.changeType(type);
     }
 

@@ -20,7 +20,7 @@ export class CastMemberModelMapper {
     const category = new CastMember({
       cast_member_id: new CastMemberId(model.cast_member_id),
       name: model.name,
-      type: CastMemberType.create(parseInt(model.type)),
+      type: CastMemberType.create(parseInt(model.type!)),
       created_at: model.created_at,
     });
     category.validate();

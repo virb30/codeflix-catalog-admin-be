@@ -1,5 +1,5 @@
 import { CategoryModel } from '../category.model';
-import { CategoryId } from '../../../../domain/category.aggregate'
+import { CategoryId } from '../../../../domain/category.aggregate';
 import { CategoryModelMapper } from '../category-model-mapper';
 import { EntityValidationError } from '../../../../../shared/domain/validators/validation.error';
 import { Category } from '../../../../domain/category.aggregate';
@@ -11,6 +11,7 @@ describe('CategoryModelMapper Integration Tests', () => {
   test('should throws error when category is invalid', () => {
     expect.assertions(2);
     const category_id = new CategoryId();
+    //@ts-expect-error - This is an invalid category
     const model = CategoryModel.build({
       category_id: category_id.id,
       name: 'a'.repeat(256),

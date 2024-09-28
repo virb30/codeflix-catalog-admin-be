@@ -7,7 +7,7 @@ import { startApp } from '../../src/nest-modules/shared-module/testing/helpers';
 import { Uuid } from '../../src/core/shared/domain/value-objects/uuid.vo';
 import { CategoriesController } from '../../src/nest-modules/categories-module/categories.controller';
 import { CategoryOutputMapper } from '../../src/core/category/application/use-cases/common/category-output';
-import { Category } from '../../src/core/category/domain/category.entity';
+import { Category } from '../../src/core/category/domain/category.aggregate';
 
 describe('CategoriesController (e2e)', () => {
   const uuid = '86768766-12eb-40ea-b00c-4f8a81528bd5';

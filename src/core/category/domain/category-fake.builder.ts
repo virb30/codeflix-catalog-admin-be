@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Uuid } from '../../shared/domain/value-objects/uuid.vo';
-import { Category } from './category.entity';
+import { Category } from './category.aggregate';
 import Chance from 'chance';
 
 type PropOrFactory<T> = T | ((index: number) => T);

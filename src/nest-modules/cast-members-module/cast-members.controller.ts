@@ -10,7 +10,6 @@ import {
   Patch,
   Post,
   Query,
-  UseFilters,
 } from '@nestjs/common';
 import { CastMemberOutput } from 'src/core/cast-member/application/use-cases/common/cast-member.output';
 import { CreateCastMemberUseCase } from 'src/core/cast-member/application/use-cases/create-cast-member/create-cast-member.use-case';
@@ -25,10 +24,8 @@ import { UpdateCastMemberUseCase } from 'src/core/cast-member/application/use-ca
 import { UpdateCastMemberDto } from './dto/update-cast-member.dto';
 import { ListCastMembersUseCase } from 'src/core/cast-member/application/use-cases/list-cast-members/list-cast-members.use-case';
 import { SearchCastMembersDto } from './dto/search-cast-members.dto';
-import { InvalidCastMemberTypeErrorFilter } from './filters/invalid-cast-member-type-error.filter';
 
 @Controller('cast-members')
-@UseFilters(new InvalidCastMemberTypeErrorFilter())
 export class CastMembersController {
   @Inject(CreateCastMemberUseCase)
   private createUseCase: CreateCastMemberUseCase;

@@ -10,6 +10,8 @@ import {
   CastMemberTypes,
   InvalidCastMemberTypeError,
 } from './cast-member-type.vo';
+import { Either } from 'src/core/shared/domain/either';
+import { SearchValidationError } from 'src/core/shared/domain/validators/validation.error';
 
 export type CastMemberFilter = {
   type?: CastMemberType | null;
@@ -31,13 +33,20 @@ export class CastMemberSearchParams extends SearchParams<CastMemberFilter> {
       };
     } = {},
   ) {
-    let type: CastMemberType | null = null;
-    try {
-      type = props?.filter?.type
-        ? new CastMemberType(+props.filter.type)
-        : null;
-    } catch (e) {
-      if (e instanceof InvalidCastMemberTypeError) type = null;
+    const [type, errorCastMemberType] = Either.of(props.filter?.type)
+      .map((type) => {
+        return type || null;
+      })
+      .chain<CastMemberType | null, InvalidCastMemberTypeError>((type) =>
+        type ? CastMemberType.create(type) : Either.of(null),
+      )
+      .asArray();
+
+    if (errorCastMemberType) {
+      const error = new SearchValidationError([
+        { type: [errorCastMemberType.message] },
+      ]);
+      throw error;
     }
 
     return new CastMemberSearchParams({

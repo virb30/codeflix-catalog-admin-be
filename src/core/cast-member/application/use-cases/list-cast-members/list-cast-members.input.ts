@@ -1,12 +1,13 @@
-import { Transform } from 'class-transformer';
+import { CastMemberTypes } from 'src/core/cast-member/domain/cast-member-type.vo';
 import { SortDirection } from '../../../../shared/domain/repository/search-params';
-import { CastMemberTypes } from '../../../domain/cast-member-type.vo';
-import { IsInt, ValidateNested, validateSync } from 'class-validator';
+import { IsEnum, IsInt, ValidateNested, validateSync } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class ListCastMembersFilter {
   name?: string | null;
   @IsInt()
-  @Transform(({ value }) => +parseInt(value))
+  @IsEnum(CastMemberTypes)
+  @Type(() => Number)
   type?: CastMemberTypes | null;
 }
 

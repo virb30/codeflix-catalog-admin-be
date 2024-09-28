@@ -146,7 +146,7 @@ export class CreateCastMemberFixture {
           type: 9999,
         },
         expected: {
-          message: 'Invalid cast member type: 9999',
+          message: ['Invalid cast member type: 9999'],
           ...defaultExpected,
         },
       },
@@ -245,7 +245,7 @@ export class UpdateCastMemberFixture {
           type: 9999,
         },
         expected: {
-          message: 'Invalid cast member type: 9999',
+          message: ['Invalid cast member type: 9999'],
           ...defaultExpected,
         },
       },

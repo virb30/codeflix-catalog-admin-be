@@ -1,5 +1,5 @@
 import { CastMemberType } from '../../../../cast-member/domain/cast-member-type.vo';
-import { EntityValidationError } from '../../../../shared/domain/validators/validation.error';
+import { LoadEntityError } from '../../../../shared/domain/validators/validation.error';
 import {
   CastMember,
   CastMemberId,
@@ -17,16 +17,26 @@ export class CastMemberModelMapper {
   }
 
   static toEntity(model: CastMemberModel): CastMember {
-    const category = new CastMember({
-      cast_member_id: new CastMemberId(model.cast_member_id),
-      name: model.name,
-      type: CastMemberType.create(parseInt(model.type!)),
-      created_at: model.created_at,
+    const { cast_member_id: id, ...otherData } = model.toJSON();
+    const [type, errorCastMemberType] = CastMemberType.create(
+      otherData.type as any,
+    ).asArray();
+
+    const castMember = new CastMember({
+      ...otherData,
+      cast_member_id: new CastMemberId(id),
+      type,
     });
-    category.validate();
-    if (category.notification.hasErrors()) {
-      throw new EntityValidationError(category.notification.toJSON());
+    castMember.validate();
+
+    const notification = castMember.notification;
+    if (errorCastMemberType) {
+      notification.setError(errorCastMemberType.message, 'type');
     }
-    return category;
+
+    if (notification.hasErrors()) {
+      throw new LoadEntityError(notification.toJSON());
+    }
+    return castMember;
   }
 }

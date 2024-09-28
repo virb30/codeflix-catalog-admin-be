@@ -109,7 +109,7 @@ describe('UpdateCastMemberUseCase Unit Tests', () => {
 
     input = { id: entity.cast_member_id.id, type: 3 } as any;
     await expect(() => usecase.execute(input)).rejects.toThrow(
-      'Invalid cast member type: 3',
+      'Entity Validation Error',
     );
   });
 

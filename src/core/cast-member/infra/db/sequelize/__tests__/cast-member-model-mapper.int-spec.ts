@@ -1,6 +1,6 @@
 import { CastMemberModel } from '../cast-member.model';
 import { CastMemberModelMapper } from '../cast-member-model-mapper';
-import { EntityValidationError } from '../../../../../shared/domain/validators/validation.error';
+import { LoadEntityError } from '../../../../../shared/domain/validators/validation.error';
 import {
   CastMember,
   CastMemberId,
@@ -9,7 +9,6 @@ import { setupSequelize } from '../../../../../shared/infra/testing/helpers';
 import {
   CastMemberType,
   CastMemberTypes,
-  InvalidCastMemberTypeError,
 } from 'src/core/cast-member/domain/cast-member-type.vo';
 
 describe('CastMemberModelMapper Integration Tests', () => {
@@ -30,8 +29,8 @@ describe('CastMemberModelMapper Integration Tests', () => {
         'The cast member is invalid, but it needs to throw EntityValidationError',
       );
     } catch (e) {
-      expect(e).toBeInstanceOf(EntityValidationError);
-      expect((e as EntityValidationError).error).toMatchObject([
+      expect(e).toBeInstanceOf(LoadEntityError);
+      expect((e as LoadEntityError).error).toMatchObject([
         {
           name: ['name must be shorter than or equal to 255 characters'],
         },
@@ -54,7 +53,7 @@ describe('CastMemberModelMapper Integration Tests', () => {
         'The cast member type is invalid, but it needs to throw InvalidCastMemberTypeError',
       );
     } catch (e) {
-      expect(e).toBeInstanceOf(InvalidCastMemberTypeError);
+      expect(e).toBeInstanceOf(LoadEntityError);
     }
   });
 

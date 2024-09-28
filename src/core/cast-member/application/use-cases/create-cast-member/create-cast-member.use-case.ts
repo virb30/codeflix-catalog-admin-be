@@ -15,11 +15,17 @@ export class CreateCastMemberUseCase
   constructor(private readonly castMemberRepo: ICastMemberRepository) {}
 
   async execute(input: CreateCastMemberInput): Promise<CreateCastMemberOutput> {
-    const type = CastMemberType.create(input.type);
+    const [type, errorCastMemberType] = CastMemberType.create(
+      input.type,
+    ).asArray();
     const castMember = CastMember.create({
       ...input,
       type,
     });
+    const notification = castMember.notification;
+    if (errorCastMemberType) {
+      notification.setError(errorCastMemberType.message, 'type');
+    }
 
     if (castMember.notification.hasErrors()) {
       throw new EntityValidationError(castMember.notification.toJSON());

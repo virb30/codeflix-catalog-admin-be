@@ -1,25 +1,25 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Category, CategoryId } from './category.aggregate';
+import { CategoryId } from 'src/core/category/domain/category.aggregate';
+import { Genre, GenreId } from './genre.aggregate';
 import Chance from 'chance';
 
 type PropOrFactory<T> = T | ((index: number) => T);
 
-export class CategoryFakeBuilder<TBuild = any> {
-  private _category_id: PropOrFactory<CategoryId> | undefined = undefined;
+export class GenreFakeBuilder<TBuild = any> {
+  private _genre_id: PropOrFactory<GenreId> | undefined = undefined;
   private _name: PropOrFactory<string> = (_index) => this.chance.word();
-  private _description: PropOrFactory<string | null> = (_index) =>
-    this.chance.paragraph();
+  private _categories_id: PropOrFactory<CategoryId>[] = [];
   private _is_active: PropOrFactory<boolean> = (_index) => true;
   private _created_at: PropOrFactory<Date> | undefined = undefined;
 
   private countObjs;
 
-  static aCategory() {
-    return new CategoryFakeBuilder<Category>();
+  static aGenre() {
+    return new GenreFakeBuilder<Genre>();
   }
 
-  static theCategories(countObjs: number) {
-    return new CategoryFakeBuilder<Category[]>(countObjs);
+  static theGenres(countObjs: number) {
+    return new GenreFakeBuilder<Genre[]>(countObjs);
   }
 
   private chance: Chance.Chance;
@@ -29,8 +29,8 @@ export class CategoryFakeBuilder<TBuild = any> {
     this.chance = Chance();
   }
 
-  withUuid(valueOrFactory: PropOrFactory<CategoryId>) {
-    this._category_id = valueOrFactory;
+  withGenreId(valueOrFactory: PropOrFactory<GenreId>) {
+    this._genre_id = valueOrFactory;
     return this;
   }
 
@@ -39,8 +39,8 @@ export class CategoryFakeBuilder<TBuild = any> {
     return this;
   }
 
-  withDescription(valueOrFactory: PropOrFactory<string | null>) {
-    this._description = valueOrFactory;
+  addCategoryId(valueOrFactory: PropOrFactory<CategoryId>) {
+    this._categories_id.push(valueOrFactory);
     return this;
   }
 
@@ -64,8 +64,8 @@ export class CategoryFakeBuilder<TBuild = any> {
     return this;
   }
 
-  get category_id() {
-    return this.getValue('category_id');
+  get genre_id() {
+    return this.getValue('genre_id');
   }
 
   get name() {
@@ -85,7 +85,7 @@ export class CategoryFakeBuilder<TBuild = any> {
   }
 
   private getValue(prop: any) {
-    const optional = ['category_id', 'created_at'];
+    const optional = ['genre_id', 'created_at'];
     const privateProp = `_${prop}` as keyof this;
     if (!this[privateProp] && optional.includes(prop)) {
       throw new Error(
@@ -96,24 +96,26 @@ export class CategoryFakeBuilder<TBuild = any> {
   }
 
   build(): TBuild {
-    const categories = new Array(this.countObjs)
-      .fill(undefined)
-      .map((_, index) => {
-        const category = new Category({
-          category_id: !this._category_id
-            ? undefined
-            : this.callFactory(this._category_id, index),
-          name: this.callFactory(this._name, index),
-          description: this.callFactory(this._description, index),
-          is_active: this.callFactory(this._is_active, index),
-          ...(this._created_at && {
-            created_at: this.callFactory(this._created_at, index),
-          }),
-        });
-        category.validate();
-        return category;
+    const genres = new Array(this.countObjs).fill(undefined).map((_, index) => {
+      const categoryId = new CategoryId();
+      const categoriesId = this._categories_id.length
+        ? this.callFactory(this._categories_id, index)
+        : [categoryId];
+      const genre = new Genre({
+        genre_id: !this._genre_id
+          ? undefined
+          : this.callFactory(this._genre_id, index),
+        name: this.callFactory(this._name, index),
+        categories_id: new Map(categoriesId.map((id) => [id.id, id])),
+        is_active: this.callFactory(this._is_active, index),
+        ...(this._created_at && {
+          created_at: this.callFactory(this._created_at, index),
+        }),
       });
-    return this.countObjs === 1 ? (categories[0] as any) : categories;
+      genre.validate();
+      return genre;
+    });
+    return this.countObjs === 1 ? (genres[0] as any) : genres;
   }
 
   private callFactory(factoryOrValue: PropOrFactory<any>, index: number) {

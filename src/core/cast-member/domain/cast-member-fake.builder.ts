@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Uuid } from '../../shared/domain/value-objects/uuid.vo';
 import { CastMemberType } from './cast-member-type.vo';
-import { CastMember } from './cast-member.aggregate';
+import { CastMember, CastMemberId } from './cast-member.aggregate';
 import Chance from 'chance';
 
 type PropOrFactory<T> = T | ((index: number) => T);
 
 export class CastMemberFakeBuilder<TBuild = any> {
-  private _cast_member_id: PropOrFactory<Uuid> | undefined = undefined;
+  private _cast_member_id: PropOrFactory<CastMemberId> | undefined = undefined;
   private _name: PropOrFactory<string> = (_index) => this.chance.word();
   private _type: PropOrFactory<CastMemberType> = (_index) =>
     CastMemberType.createAnActor();
@@ -30,7 +29,7 @@ export class CastMemberFakeBuilder<TBuild = any> {
     this.chance = Chance();
   }
 
-  withUuid(valueOrFactory: PropOrFactory<Uuid>) {
+  withUuid(valueOrFactory: PropOrFactory<CastMemberId>) {
     this._cast_member_id = valueOrFactory;
     return this;
   }

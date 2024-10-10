@@ -12,7 +12,7 @@ import { setupSequelize } from '../../../../../shared/infra/testing/helpers';
 import { CategoryModel } from '../../../../../category/infra/db/sequelize/category.model';
 import { CategorySequelizeRepository } from '../../../../../category/infra/db/sequelize/category-sequelize.repository';
 import { Category } from '../../../../../category/domain/category.aggregate';
-import { UnitOfWorkSequelize } from 'src/core/shared/infra/db/sequelize/unit-of-work-sequelize';
+import { UnitOfWorkSequelize } from '../../../../../shared/infra/db/sequelize/unit-of-work-sequelize';
 
 describe('GenreSequelizeRepository Integration Test', () => {
   const sequelize = setupSequelize({
@@ -148,245 +148,559 @@ describe('GenreSequelizeRepository Integration Test', () => {
     await expect(genreRepo.findById(genre.genre_id)).resolves.toBeNull();
   });
 
-  // describe('search method tests', () => {
-  //   it('should only apply paginate when other params are null', async () => {
-  //     const created_at = new Date();
-  //     const genres = Genre.fake()
-  //       .theGenres(16)
-  //       .withName('Movie')
-  //       .withCreatedAt(created_at)
-  //       .build();
-  //     await repository.bulkInsert(genres);
-  //     const spyToEntity = jest.spyOn(GenreModelMapper, 'toEntity');
-  //     const searchOutput = await repository.search(new GenreSearchParams());
-  //     expect(searchOutput).toBeInstanceOf(GenreSearchResult);
-  //     expect(spyToEntity).toHaveBeenCalledTimes(15);
-  //     expect(searchOutput.toJSON()).toMatchObject({
-  //       total: 16,
-  //       current_page: 1,
-  //       last_page: 2,
-  //       per_page: 15,
-  //     });
-  //     searchOutput.items.forEach((item) => {
-  //       expect(item).toBeInstanceOf(Genre);
-  //       expect(item.genre_id).toBeDefined();
-  //     });
-  //     const items = searchOutput.items.map((item) => item.toJSON());
-  //     expect(items).toMatchObject(
-  //       new Array(15).fill({
-  //         name: 'Movie',
-  //         description: null,
-  //         is_active: true,
-  //         created_at,
-  //       }),
-  //     );
-  //   });
+  describe('search method tests', () => {
+    it('should order by created_at DESC when search params are null', async () => {
+      const categories = Category.fake().theCategories(3).build();
+      await categoryRepo.bulkInsert(categories);
+      const genres = Genre.fake()
+        .theGenres(16)
+        .withCreatedAt((index) => new Date(new Date().getTime() + 199 + index))
+        .addCategoryId(categories[0].category_id)
+        .addCategoryId(categories[1].category_id)
+        .addCategoryId(categories[2].category_id)
+        .build();
+      await genreRepo.bulkInsert(genres);
+      const spyToEntity = jest.spyOn(GenreModelMapper, 'toEntity');
+      const searchOutput = await genreRepo.search(GenreSearchParams.create());
+      expect(searchOutput).toBeInstanceOf(GenreSearchResult);
+      expect(spyToEntity).toHaveBeenCalledTimes(15);
+      expect(searchOutput.toJSON()).toMatchObject({
+        total: 16,
+        current_page: 1,
+        last_page: 2,
+        per_page: 15,
+      });
+    });
 
-  //   it('should order by created_at DESC when search params are null', async () => {
-  //     const created_at = new Date();
-  //     const genres = Genre.fake()
-  //       .theGenres(16)
-  //       .withName((index) => `Movie ${index}`)
-  //       .withDescription(null)
-  //       .withCreatedAt((index) => new Date(created_at.getTime() + index))
-  //       .build();
-  //     await repository.bulkInsert(genres);
-  //     const searchOutput = await repository.search(new GenreSearchParams());
-  //     const items = searchOutput.items.map((item) => item.toJSON());
-  //     [...items].reverse().forEach((item, index) => {
-  //       expect(`${item.name}`).toBe(`${genres[index + 1].name}`);
-  //     });
-  //   });
+    it('should apply paginate and filter by name', async () => {
+      const categories = Category.fake().theCategories(3).build();
+      await categoryRepo.bulkInsert(categories);
+      const genres = [
+        Genre.fake()
+          .aGenre()
+          .withName('test')
+          .withCreatedAt(new Date(new Date().getTime() + 4000))
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .addCategoryId(categories[2].category_id)
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .withName('a')
+          .withCreatedAt(new Date(new Date().getTime() + 3000))
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .addCategoryId(categories[2].category_id)
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .withName('TEST')
+          .withCreatedAt(new Date(new Date().getTime() + 2000))
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .addCategoryId(categories[2].category_id)
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .withName('TeSt')
+          .withCreatedAt(new Date(new Date().getTime() + 1000))
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .addCategoryId(categories[2].category_id)
+          .build(),
+      ];
 
-  //   it('should apply paginate and filter', async () => {
-  //     const genres = [
-  //       Genre.fake()
-  //         .aGenre()
-  //         .withName('test')
-  //         .withCreatedAt(new Date(new Date().getTime() + 5000))
-  //         .build(),
-  //       Genre.fake()
-  //         .aGenre()
-  //         .withName('a')
-  //         .withCreatedAt(new Date(new Date().getTime() + 4000))
-  //         .build(),
-  //       Genre.fake()
-  //         .aGenre()
-  //         .withName('TEST')
-  //         .withCreatedAt(new Date(new Date().getTime() + 3000))
-  //         .build(),
-  //       Genre.fake()
-  //         .aGenre()
-  //         .withName('TeSt')
-  //         .withCreatedAt(new Date(new Date().getTime() + 1000))
-  //         .build(),
-  //     ];
+      await genreRepo.bulkInsert(genres);
 
-  //     await repository.bulkInsert(genres);
+      let searchOutput = await genreRepo.search(
+        GenreSearchParams.create({
+          page: 1,
+          per_page: 2,
+          filter: {
+            name: 'TEST',
+          },
+        }),
+      );
 
-  //     let searchOutput = await repository.search(
-  //       new GenreSearchParams({
-  //         page: 1,
-  //         per_page: 2,
-  //         filter: 'TEST',
-  //       }),
-  //     );
+      let expected = new GenreSearchResult({
+        items: [genres[0], genres[2]],
+        total: 3,
+        current_page: 1,
+        per_page: 2,
+      }).toJSON(true);
 
-  //     expect(searchOutput.toJSON(true)).toMatchObject(
-  //       new GenreSearchResult({
-  //         items: [genres[0], genres[2]],
-  //         total: 3,
-  //         current_page: 1,
-  //         per_page: 2,
-  //       }).toJSON(true),
-  //     );
+      expect(searchOutput.toJSON(true)).toMatchObject({
+        ...expected,
+        items: [
+          {
+            ...expected.items[0],
+            categories_id: expect.arrayContaining([
+              categories[0].category_id.id,
+              categories[1].category_id.id,
+              categories[2].category_id.id,
+            ]),
+          },
+          {
+            ...expected.items[1],
+            categories_id: expect.arrayContaining([
+              categories[0].category_id.id,
+              categories[1].category_id.id,
+              categories[2].category_id.id,
+            ]),
+          },
+        ],
+      });
 
-  //     searchOutput = await repository.search(
-  //       new GenreSearchParams({
-  //         page: 2,
-  //         per_page: 2,
-  //         filter: 'TEST',
-  //       }),
-  //     );
+      expected = new GenreSearchResult({
+        items: [genres[3]],
+        total: 3,
+        current_page: 2,
+        per_page: 2,
+      }).toJSON(true);
 
-  //     expect(searchOutput.toJSON(true)).toMatchObject(
-  //       new GenreSearchResult({
-  //         items: [genres[3]],
-  //         total: 3,
-  //         current_page: 2,
-  //         per_page: 2,
-  //       }).toJSON(true),
-  //     );
-  //   });
+      searchOutput = await genreRepo.search(
+        GenreSearchParams.create({
+          page: 2,
+          per_page: 2,
+          filter: {
+            name: 'TEST',
+          },
+        }),
+      );
 
-  //   it('should paginate and sort', async () => {
-  //     expect(repository.sortableFields).toStrictEqual(['name', 'created_at']);
+      expect(searchOutput.toJSON(true)).toMatchObject({
+        ...expected,
+        items: [
+          {
+            ...expected.items[0],
+            categories_id: expect.arrayContaining([
+              categories[0].category_id.id,
+              categories[1].category_id.id,
+              categories[2].category_id.id,
+            ]),
+          },
+        ],
+      });
+    });
 
-  //     const genres = [
-  //       Genre.fake().aGenre().withName('b').build(),
-  //       Genre.fake().aGenre().withName('a').build(),
-  //       Genre.fake().aGenre().withName('d').build(),
-  //       Genre.fake().aGenre().withName('e').build(),
-  //       Genre.fake().aGenre().withName('c').build(),
-  //     ];
-  //     await repository.bulkInsert(genres);
+    it('should apply paginate and filter by categories_id', async () => {
+      const categories = Category.fake().theCategories(4).build();
+      await categoryRepo.bulkInsert(categories);
+      const genres = [
+        Genre.fake()
+          .aGenre()
+          .withCreatedAt(new Date(new Date().getTime() + 1000))
+          .addCategoryId(categories[0].category_id)
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .withCreatedAt(new Date(new Date().getTime() + 2000))
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .withCreatedAt(new Date(new Date().getTime() + 3000))
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .addCategoryId(categories[2].category_id)
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .withCreatedAt(new Date(new Date().getTime() + 4000))
+          .addCategoryId(categories[3].category_id)
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .withCreatedAt(new Date(new Date().getTime() + 5000))
+          .addCategoryId(categories[1].category_id)
+          .addCategoryId(categories[2].category_id)
+          .build(),
+      ];
 
-  //     const arrange = [
-  //       {
-  //         params: new GenreSearchParams({
-  //           page: 1,
-  //           per_page: 2,
-  //           sort: 'name',
-  //         }),
-  //         result: new GenreSearchResult({
-  //           items: [genres[1], genres[0]],
-  //           total: 5,
-  //           current_page: 1,
-  //           per_page: 2,
-  //         }),
-  //       },
-  //       {
-  //         params: new GenreSearchParams({
-  //           page: 2,
-  //           per_page: 2,
-  //           sort: 'name',
-  //         }),
-  //         result: new GenreSearchResult({
-  //           items: [genres[4], genres[2]],
-  //           total: 5,
-  //           current_page: 2,
-  //           per_page: 2,
-  //         }),
-  //       },
-  //       {
-  //         params: new GenreSearchParams({
-  //           page: 1,
-  //           per_page: 2,
-  //           sort: 'name',
-  //           sort_dir: 'desc',
-  //         }),
-  //         result: new GenreSearchResult({
-  //           items: [genres[3], genres[2]],
-  //           total: 5,
-  //           current_page: 1,
-  //           per_page: 2,
-  //         }),
-  //       },
-  //       {
-  //         params: new GenreSearchParams({
-  //           page: 2,
-  //           per_page: 2,
-  //           sort: 'name',
-  //           sort_dir: 'desc',
-  //         }),
-  //         result: new GenreSearchResult({
-  //           items: [genres[4], genres[0]],
-  //           total: 5,
-  //           current_page: 2,
-  //           per_page: 2,
-  //         }),
-  //       },
-  //     ];
+      await genreRepo.bulkInsert(genres);
 
-  //     for (const i of arrange) {
-  //       const result = await repository.search(i.params);
-  //       expect(result.toJSON(true)).toMatchObject(i.result.toJSON(true));
-  //     }
-  //   });
+      const arrange = [
+        {
+          params: GenreSearchParams.create({
+            page: 1,
+            per_page: 2,
+            filter: { categories_id: [categories[0].category_id.id] },
+          }),
+          result: {
+            items: [genres[2], genres[1]],
+            total: 3,
+            current_page: 1,
+            per_page: 2,
+          },
+        },
+        {
+          params: GenreSearchParams.create({
+            page: 2,
+            per_page: 2,
+            filter: { categories_id: [categories[0].category_id.id] },
+          }),
+          result: {
+            items: [genres[0]],
+            total: 3,
+            current_page: 2,
+            per_page: 2,
+          },
+        },
+        {
+          params: GenreSearchParams.create({
+            page: 1,
+            per_page: 2,
+            filter: {
+              categories_id: [
+                categories[0].category_id.id,
+                categories[1].category_id.id,
+              ],
+            },
+          }),
+          result: {
+            items: [genres[4], genres[2]],
+            total: 4,
+            current_page: 1,
+            per_page: 2,
+          },
+        },
+        {
+          params: GenreSearchParams.create({
+            page: 2,
+            per_page: 2,
+            filter: {
+              categories_id: [
+                categories[0].category_id.id,
+                categories[1].category_id.id,
+              ],
+            },
+          }),
+          result: {
+            items: [genres[1], genres[0]],
+            total: 4,
+            current_page: 2,
+            per_page: 2,
+          },
+        },
+      ];
 
-  //   describe('should search using filter, sort and paginate', () => {
-  //     const genres = [
-  //       Genre.fake().aGenre().withName('test').build(),
-  //       Genre.fake().aGenre().withName('a').build(),
-  //       Genre.fake().aGenre().withName('TEST').build(),
-  //       Genre.fake().aGenre().withName('e').build(),
-  //       Genre.fake().aGenre().withName('TeSt').build(),
-  //     ];
+      for (const arrangeItem of arrange) {
+        const searchOutput = await genreRepo.search(arrangeItem.params);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { items, ...otherOutput } = searchOutput;
+        const { items: itemsExpected, ...otherExpected } = arrangeItem.result;
+        expect(otherOutput).toMatchObject(otherExpected);
+        expect(searchOutput.items.length).toBe(itemsExpected.length);
+        searchOutput.items.forEach((item, key) => {
+          const expected = itemsExpected[key].toJSON();
+          expect(item.toJSON()).toStrictEqual(
+            expect.objectContaining({
+              ...expected,
+              categories_id: expect.arrayContaining(expected.categories_id),
+            }),
+          );
+        });
+      }
+    });
 
-  //     const arrange = [
-  //       {
-  //         search_params: new GenreSearchParams({
-  //           page: 1,
-  //           per_page: 2,
-  //           sort: 'name',
-  //           filter: 'TEST',
-  //         }),
-  //         search_result: new GenreSearchResult({
-  //           items: [genres[2], genres[4]],
-  //           total: 3,
-  //           current_page: 1,
-  //           per_page: 2,
-  //         }),
-  //       },
-  //       {
-  //         search_params: new GenreSearchParams({
-  //           page: 2,
-  //           per_page: 2,
-  //           sort: 'name',
-  //           filter: 'TEST',
-  //         }),
-  //         search_result: new GenreSearchResult({
-  //           items: [genres[0]],
-  //           total: 3,
-  //           current_page: 2,
-  //           per_page: 2,
-  //         }),
-  //       },
-  //     ];
+    it('should apply paginate and sort', async () => {
+      expect(genreRepo.sortableFields).toStrictEqual(['name', 'created_at']);
 
-  //     beforeEach(async () => {
-  //       await repository.bulkInsert(genres);
-  //     });
+      const categories = Category.fake().theCategories(4).build();
+      await categoryRepo.bulkInsert(categories);
+      const genres = [
+        Genre.fake()
+          .aGenre()
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .addCategoryId(categories[2].category_id)
+          .withName('b')
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .addCategoryId(categories[2].category_id)
+          .withName('a')
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .addCategoryId(categories[2].category_id)
+          .withName('d')
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .addCategoryId(categories[2].category_id)
+          .withName('e')
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .addCategoryId(categories[2].category_id)
+          .withName('c')
+          .build(),
+      ];
+      await genreRepo.bulkInsert(genres);
 
-  //     test.each(arrange)(
-  //       'when value is $search_params',
-  //       async ({ search_params, search_result }) => {
-  //         const result = await repository.search(search_params);
-  //         expect(result.toJSON(true)).toMatchObject(search_result.toJSON(true));
-  //       },
-  //     );
-  //   });
-  // });
+      const arrange = [
+        {
+          params: GenreSearchParams.create({
+            page: 1,
+            per_page: 2,
+            sort: 'name',
+          }),
+          result: new GenreSearchResult({
+            items: [genres[1], genres[0]],
+            total: 5,
+            current_page: 1,
+            per_page: 2,
+          }),
+        },
+        {
+          params: GenreSearchParams.create({
+            page: 2,
+            per_page: 2,
+            sort: 'name',
+          }),
+          result: new GenreSearchResult({
+            items: [genres[4], genres[2]],
+            total: 5,
+            current_page: 2,
+            per_page: 2,
+          }),
+        },
+        {
+          params: GenreSearchParams.create({
+            page: 1,
+            per_page: 2,
+            sort: 'name',
+            sort_dir: 'desc',
+          }),
+          result: new GenreSearchResult({
+            items: [genres[3], genres[2]],
+            total: 5,
+            current_page: 1,
+            per_page: 2,
+          }),
+        },
+        {
+          params: GenreSearchParams.create({
+            page: 2,
+            per_page: 2,
+            sort: 'name',
+            sort_dir: 'desc',
+          }),
+          result: new GenreSearchResult({
+            items: [genres[4], genres[0]],
+            total: 5,
+            current_page: 2,
+            per_page: 2,
+          }),
+        },
+      ];
+
+      for (const i of arrange) {
+        const result = await genreRepo.search(i.params);
+        const expected = i.result.toJSON(true);
+
+        expect(result.toJSON(true)).toMatchObject({
+          ...expected,
+          items: expected.items.map((i) => ({
+            ...i,
+            categories_id: expect.arrayContaining(i.categories_id),
+          })),
+        });
+      }
+    });
+
+    describe('should search using filter by categories_id, sort and paginate', () => {
+      const categories = Category.fake().theCategories(4).build();
+
+      const genres = [
+        Genre.fake()
+          .aGenre()
+          .addCategoryId(categories[0].category_id)
+          .withName('test')
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .withName('a')
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .addCategoryId(categories[2].category_id)
+          .withName('TEST')
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .addCategoryId(categories[3].category_id)
+          .withName('e')
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .addCategoryId(categories[1].category_id)
+          .addCategoryId(categories[2].category_id)
+          .withName('TeSt')
+          .build(),
+      ];
+
+      const arrange = [
+        {
+          search_params: GenreSearchParams.create({
+            page: 1,
+            per_page: 2,
+            sort: 'name',
+            filter: { categories_id: [categories[0].category_id.id] },
+          }),
+          search_result: new GenreSearchResult({
+            items: [genres[2], genres[1]],
+            total: 3,
+            current_page: 1,
+            per_page: 2,
+          }),
+        },
+        {
+          search_params: GenreSearchParams.create({
+            page: 2,
+            per_page: 2,
+            sort: 'name',
+            filter: { categories_id: [categories[0].category_id.id] },
+          }),
+          search_result: new GenreSearchResult({
+            items: [genres[0]],
+            total: 3,
+            current_page: 2,
+            per_page: 2,
+          }),
+        },
+      ];
+
+      beforeEach(async () => {
+        await categoryRepo.bulkInsert(categories);
+        await genreRepo.bulkInsert(genres);
+      });
+
+      test.each(arrange)(
+        'when value is $search_params',
+        async ({ search_params, search_result: expected_result }) => {
+          const result = await genreRepo.search(search_params);
+          const expected = expected_result.toJSON(true);
+          expect(result.toJSON(true)).toMatchObject({
+            ...expected,
+            items: expected.items.map((i) => ({
+              ...i,
+              categories_id: expect.arrayContaining(i.categories_id),
+            })),
+          });
+        },
+      );
+    });
+
+    describe('should search using filter by name and categories_id, sort and paginate', () => {
+      const categories = Category.fake().theCategories(4).build();
+
+      const genres = [
+        Genre.fake()
+          .aGenre()
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .withName('test')
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .withName('a')
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .addCategoryId(categories[0].category_id)
+          .addCategoryId(categories[1].category_id)
+          .addCategoryId(categories[2].category_id)
+          .withName('TEST')
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .addCategoryId(categories[3].category_id)
+          .withName('e')
+          .build(),
+        Genre.fake()
+          .aGenre()
+          .addCategoryId(categories[1].category_id)
+          .addCategoryId(categories[2].category_id)
+          .withName('TeSt')
+          .build(),
+      ];
+
+      const arrange = [
+        {
+          search_params: GenreSearchParams.create({
+            page: 1,
+            per_page: 2,
+            sort: 'name',
+            filter: {
+              name: 'TEST',
+              categories_id: [categories[1].category_id],
+            },
+          }),
+          search_result: new GenreSearchResult({
+            items: [genres[2], genres[4]],
+            total: 3,
+            current_page: 1,
+            per_page: 2,
+          }),
+        },
+        {
+          search_params: GenreSearchParams.create({
+            page: 2,
+            per_page: 2,
+            sort: 'name',
+            filter: {
+              name: 'TEST',
+              categories_id: [categories[1].category_id],
+            },
+          }),
+          search_result: new GenreSearchResult({
+            items: [genres[0]],
+            total: 3,
+            current_page: 2,
+            per_page: 2,
+          }),
+        },
+      ];
+
+      beforeEach(async () => {
+        await categoryRepo.bulkInsert(categories);
+        await genreRepo.bulkInsert(genres);
+      });
+
+      test.each(arrange)(
+        'when value is $search_params',
+        async ({ search_params, search_result: expected_result }) => {
+          const result = await genreRepo.search(search_params);
+          const expected = expected_result.toJSON(true);
+          expect(result.toJSON(true)).toMatchObject({
+            ...expected,
+            items: expected.items.map((i) => ({
+              ...i,
+              categories_id: expect.arrayContaining(i.categories_id),
+            })),
+          });
+        },
+      );
+    });
+  });
+
   describe('transaction mode', () => {
     describe('insert method', () => {
       it('should insert a genre', async () => {

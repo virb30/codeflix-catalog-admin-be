@@ -1,3 +1,4 @@
+import { InvalidArgumentError } from 'src/core/shared/domain/errors/invalid-argument.error';
 import { Entity } from '../../../domain/entity';
 import { NotFoundError } from '../../../domain/errors/not-found.error';
 import {
@@ -53,6 +54,43 @@ export abstract class InMemoryRepository<
 
   async findAll(): Promise<E[]> {
     return this.items;
+  }
+
+  async existsById(
+    ids: EntityId[],
+  ): Promise<{ exists: EntityId[]; not_exists: EntityId[] }> {
+    if (!ids.length) {
+      throw new InvalidArgumentError(
+        'ids must be an array with at least one element',
+      );
+    }
+
+    if (this.items.length === 0) {
+      return {
+        exists: [],
+        not_exists: ids,
+      };
+    }
+
+    const existsId = new Set<EntityId>();
+    const notExistsId = new Set<EntityId>();
+    ids.forEach((id) => {
+      const item = this.items.find((entity) => entity.entity_id.equals(id));
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      item ? existsId.add(id) : notExistsId.add(id);
+    });
+
+    return {
+      exists: Array.from(existsId.values()),
+      not_exists: Array.from(notExistsId.values()),
+    };
+  }
+
+  async findByIds(ids: EntityId[]): Promise<E[]> {
+    //avoid to return repeated items
+    return this.items.filter((entity) => {
+      return ids.some((id) => entity.entity_id.equals(id));
+    });
   }
 
   abstract getEntity(): new (...args: any[]) => E;

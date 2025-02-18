@@ -12,7 +12,7 @@ describe('CategoriesIdExistsInStorageValidator Unit Tests', () => {
     validator = new CategoriesIdExistsInStorageValidator(categoryRepo);
   });
 
-  it('should return many not found error when categories id not exists in repository', async () => {
+  it('should return many not found error when categories id not exists in storage', async () => {
     const categoryId1 = new CategoryId();
     const categoryId2 = new CategoryId();
     const spyExistsById = jest.spyOn(categoryRepo, 'existsById');

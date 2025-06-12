@@ -30,7 +30,7 @@ describe('DeleteGenreUseCase Unit Tests', () => {
     await useCase.execute({
       id: items[0].genre_id.id,
     });
-    expect(spyOnDo).toBeCalledTimes(1);
+    expect(spyOnDo).toHaveBeenCalledTimes(1);
     expect(repository.items).toHaveLength(0);
   });
 });
